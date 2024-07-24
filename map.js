@@ -2,8 +2,8 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-01-19 16:35:21
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-01-23 10:21:18
- * @FilePath: \gis\map.js
+ * @LastEditTime: 2024-07-24 14:43:42
+ * @FilePath: \GIS\gis\map.js
  * @Description: 
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
@@ -463,3 +463,4 @@ var mapUtil={
         })
     },
 }
+export default mapUtil
