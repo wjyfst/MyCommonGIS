@@ -4,15 +4,15 @@ layout: home
 
 hero:
   name: "LesGIS"
-  text: "ArcGIS、高德等常用地图框架"
+  text: "ArcGIS API、高德地图API 等常用地图框架功能集成"
   tagline: 
   actions:
     - theme: brand
-      text: ArcGIS API
-      link: /ArcGIS/mapinitializing.md
-    - theme: alt
-      text: 高德地图API
-      link: /Gaode/mapinitializing.md
+      text: LesGIS
+      link: /LesGIS/mapinitializing.md
+    # - theme: alt
+    #   text: 高德地图API
+    #   link: /Gaode/mapinitializing.md
 
 features:
   # - title: Feature A

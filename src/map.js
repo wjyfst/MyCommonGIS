@@ -2,16 +2,21 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-01-19 16:35:21
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-07-24 14:43:42
+ * @LastEditTime: 2024-08-19 11:37:36
  * @FilePath: \GIS\gis\map.js
  * @Description: 
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
  */
-var mapUtil={
-    mapAPIConfig:{
-        id:'',
+import { arcgis } from "./arcgis";
+import { amap } from "./amap";
+
+export const mapUtil={
+    mapAPIEnum: {
+        '高德': { api: amap },
+        'ArcGIS': { api: arcgis }
     },
+    mapAPIConfig:{api:{}},
     layers:{},//图层管理器
     events: {},
     popups: {},
@@ -19,6 +24,26 @@ var mapUtil={
     layerstate: {},
     _clickEvts: {},
     _clickEvtPoint: "",
+
+    /**
+    * @description: 初始化
+    * @param {*} params
+    * @return {*}
+    */
+    initMap(params) {
+        let {apiName, ...initMapParams}=params
+        if(!apiName){
+            alert('未指定地图框架!');
+            return
+        }
+        this.mapAPIConfig.api=this.mapAPIEnum[apiName].api
+
+        this.mapAPIConfig.api.initMap(initMapParams)
+    },
+
+    destroyMap(){
+        this.mapAPIConfig.api.destroy()
+    },
 
     /**
      * @description: 坐标系转换功能实现
@@ -221,42 +246,6 @@ var mapUtil={
             return false
         }
         return true
-    },
-
-    /**
-     * @description: 初始化
-     * @param {*} params
-     * @return {*}
-     */
-    initMap(params) {
-        if (!window.view) window.view = ArcGisUtils.initSceneView({
-            divId: params.mapDiv || "viewDiv",
-            camera: {
-                position: {
-                    spatialReference: {
-                        wkid: 4490,
-                    },
-                    x: params.x || 119.65842342884746,
-                    y: params.y || 28.97890877935061,
-                    z: params.z || 10280.48295974452,
-                },
-                heading: params.heading || 354.2661149152386,
-                tilt: params.tilt || 47.902020858006175,
-            },
-            basemap: params.basemap || "image", //vector
-            isDefaultGoToFromGlobal: params.isDefaultGoToFromGlobal,
-            alphaCompositingEnabled: params.alphaCompositingEnabled,
-            environment: params.environment,
-            ground: params.ground,
-        });
-        view.when(() => {
-            this.mapview = window.view
-            window.gis = window.ArcGisUtils
-            if (params.onload) params.onload(view)
-            if (params.onclick) this.mapclick = params.onclick
-            if (params.user) this._user = params.user //功能消费者
-        })
-        return view
     },
 
     /**
@@ -463,4 +452,3 @@ var mapUtil={
         })
     },
 }
-export default mapUtil
