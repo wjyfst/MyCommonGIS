@@ -45,6 +45,9 @@ const amap = {
                 gaodeMap.on("click", function (e) {
                     gaodeMap.clearInfoWindow();
                 })
+                gaodeMap.on('complete', function () {
+                    if (params.callback) params.callback()
+                });
             })
             .catch((e) => {
                 console.log(e);
@@ -54,68 +57,69 @@ const amap = {
         window.gaodeMap?.destroy()
     },
     /**
-     * 加载图层
+     * 加载点位图层
      * @param data
      * @param opts
      */
-    loadLayer: function (data, opts) {
+    loadPointLayer: function (opts) {
+        let datacfg = opts.datacfg || {};
+        let iconcfg = opts.iconcfg || { image: "" };
+        let labelcfg = opts.labelcfg || {};
+        let layercfg = opts.layercfg || {};
+        let popcfg = opts.popcfg || {}
+        let onclick = opts.onclick
+        let layerid = opts.layerid || layercfg.layerid
+        let data = opts.data
+        let iconlist = iconcfg.iconlist || {}
         if (!opts.layerid)
             return;
-        if (!mapUtil._layerGroup[opts.layerid]) {
-            mapUtil._layerGroup[opts.layerid] = [];
+        if (!this._layerGroup[opts.layerid]) {
+            this._layerGroup[opts.layerid] = [];
         }
         else {
             return;
         }
         data.forEach(item => {
-            if (opts.query && opts.query.type === "perPoint") {
-                if (!opts.query.centers) {
-                    opts.query.centers = [[item.lng * 1, item.lat * 1]]
-                }
-                else {
-                    opts.query.centers.push([item.lng * 1, item.lat * 1])
-                }
-            }
-            let marker = mapUtil._getMarker(item, opts);
+            // if (opts.query && opts.query.type === "perPoint") {
+            //     if (!opts.query.centers) {
+            //         opts.query.centers = [[item.lng * 1, item.lat * 1]]
+            //     }
+            //     else {
+            //         opts.query.centers.push([item.lng * 1, item.lat * 1])
+            //     }
+            // }
+            let marker = this._getMarker(item, opts);
             if (!isNaN(item.lng * 1) && !isNaN(item.lat * 1))
-                map.add(marker);
-            mapUtil._layerGroup[opts.layerid].push(marker);
+                gaodeMap.add(marker);
+            this._layerGroup[opts.layerid].push(marker);
         });
-        if (opts.query) {
-            mapUtil.loadQueryLayer(opts.query.data, opts)
-        }
+        return {layer:this._layerGroup[layerid],remove:()=>{
+            this.removeLayer(layerid)
+        }}
         if (opts.minZoom) {
             let evtName = "zoomchange";
             let evtHandler = function (e) {
                 let curZoom = e.target.getZoom();
                 if (curZoom >= opts.minZoom) {
-                    mapUtil._layerGroup[opts.layerid].forEach(marker => {
+                    this._layerGroup[opts.layerid].forEach(marker => {
                         marker.show();
                     })
                 }
                 else {
-                    mapUtil._layerGroup[opts.layerid].forEach(marker => {
+                    this._layerGroup[opts.layerid].forEach(marker => {
                         marker.hide();
                     })
                 }
             };
             map.on(evtName, evtHandler)
-            if (!mapUtil._evtGroup[opts.layerid]) {
-                mapUtil._evtGroup[opts.layerid] = {
+            if (!this._evtGroup[opts.layerid]) {
+                this._evtGroup[opts.layerid] = {
                     "zoomchange": evtHandler
                 }
             } else {
-                Object.assign(mapUtil._evtGroup[opts.layerid], { "zoomchange": evtHandler })
+                Object.assign(this._evtGroup[opts.layerid], { "zoomchange": evtHandler })
             }
         }
-        //根据覆盖物调整地图
-        // let allMarkers = [];
-        // for (let key in mapUtil._layerGroup){
-        //     mapUtil._layerGroup[key].forEach(item => {
-        //         allMarkers.push(item);
-        //     })
-        // }
-        // map.setFitView(allMarkers);
     },
     /**
      * 生成Marker
@@ -125,7 +129,7 @@ const amap = {
      * @private
      */
     _getMarker: function (item, opts) {
-        let gcjCoords = mapUtil._srConvertInterface(item.lng * 1, item.lat * 1, opts.sr);
+        let gcjCoords = this._srConvertInterface(item.lng * 1, item.lat * 1, opts.sr);
         item.lng = gcjCoords[0];
         item.lat = gcjCoords[1];
         let iconOpts, iconWidth, iconHeight;
@@ -195,7 +199,7 @@ const amap = {
             item.popOffSet = opts.popCfg.popOffset ? opts.popCfg.popOffset : null;
             item.renderPopCallBack = opts.popCfg.renderPopCallBack ? opts.popCfg.renderPopCallBack : null;
             item.closePopCallback = opts.popCfg.closePopCallback ? opts.popCfg.closePopCallback : null;
-            marker.on("click", mapUtil.showPopup)
+            marker.on("click", this.showPopup)
         }
         marker.setExtData(item);
         return marker
@@ -205,21 +209,21 @@ const amap = {
      * @param name
      */
     removeLayer: function (name) {
-        if (!mapUtil._layerGroup[name])
+        if (!this._layerGroup[name])
             return;
-        if (mapUtil._layerGroup[name]) {
-            mapUtil._layerGroup[name].forEach(item => {
+        if (this._layerGroup[name]) {
+            this._layerGroup[name].forEach(item => {
                 map.remove(item);
             });
-            mapUtil._layerGroup[name] = [];
-            delete mapUtil._layerGroup[name];
+            this._layerGroup[name] = [];
+            delete this._layerGroup[name];
         }
         //解绑事件
-        if (mapUtil._evtGroup[name]) {
-            for (let key in mapUtil._evtGroup[name]) {
-                map.off(key, mapUtil._evtGroup[name][key])
+        if (this._evtGroup[name]) {
+            for (let key in this._evtGroup[name]) {
+                map.off(key, this._evtGroup[name][key])
             }
-            mapUtil._evtGroup[name] = null;
+            this._evtGroup[name] = null;
         }
         map.clearInfoWindow();
     },
@@ -227,8 +231,8 @@ const amap = {
      * 清除所有图层
      */
     removeAllLayers: function () {
-        for (let key in mapUtil._layerGroup) {
-            mapUtil.removeLayer(key);
+        for (let key in this._layerGroup) {
+            this.removeLayer(key);
         }
     },
     /**
@@ -247,22 +251,22 @@ const amap = {
             offset: curOffset,
             anchor: "bottom-left"
         };
-        mapUtil._infoWindow = new AMap.InfoWindow(infoWindowOpts);
+        this._infoWindow = new AMap.InfoWindow(infoWindowOpts);
         if (attributes.closePopCallback && typeof attributes.closePopCallback === "function") {
-            mapUtil._infoWindow.on("close", function (e) {
-                if (!mapUtil._infoWindow.getIsOpen()) {
+            this._infoWindow.on("close", function (e) {
+                if (!this._infoWindow.getIsOpen()) {
                     attributes.closePopCallback();
                 }
             })
-            // mapUtil._closePopCallback = attributes.closePopCallback;
+            // this._closePopCallback = attributes.closePopCallback;
         }
         if (attributes.renderPopCallBack && typeof attributes.renderPopCallBack === "function") {
-            mapUtil._infoWindow.on("open", function (e) {
+            this._infoWindow.on("open", function (e) {
                 attributes.renderPopCallBack(attributes)
             })
         }
-        mapUtil._infoWindow.open(map, e.target.getPosition());
-        // mapUtil._popOnShow = true;
+        this._infoWindow.open(map, e.target.getPosition());
+        // this._popOnShow = true;
         attributes.popDom.style.display = "block";
         $(".panel-close-tc").off("click").on("click", function () {
             map.clearInfoWindow();
@@ -317,7 +321,7 @@ const amap = {
                         }
                     }
                 });
-                mapUtil._labelLayer.add(label)
+                this._labelLayer.add(label)
             }
         })
     },
@@ -465,7 +469,7 @@ const amap = {
      * @private
      */
     _srConvertInterface: function (lng, lat, sr) {
-        let _srConvert = new mapUtil._srConvert;
+        let _srConvert = new this._srConvert;
         let gcjCoords;
         if (sr === "bd09") {
             gcjCoords = _srConvert.bd09togcj02(lng * 1, lat * 1)
