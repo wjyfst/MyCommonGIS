@@ -2,20 +2,16 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 15:20:44
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-09-11 16:55:27
- * @FilePath: \GIS\gis\docs\LesGIS\mapinitializing.md
+ * @LastEditTime: 2024-09-27 14:06:30
+ * @FilePath: \code\docs\LesGIS\mapinitializing.md
  * @Description: 
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
 -->
 <script setup>
-import amap from '../../views/amap.vue'
-import esriMap from '../../views/esriMap.vue'
+import amap from '../views/amap/amapInit.vue'
+import esriMap from '../views/esri/esriMapInit.vue'
 </script>
-- [地图初始化](#地图初始化)
-  - [文件引入](#文件引入)
-  - [高德](#高德)
-  - [ArcGIS](#arcgis)
 
 
 # 地图初始化
@@ -26,7 +22,7 @@ import esriMap from '../../views/esriMap.vue'
    
    `import`方式引入：
    ```js
-   import { mapUtil } from "map.js";
+   import { MapUtil } from "map.js";
    ```
 
    `script`标签方式引入：
@@ -34,17 +30,32 @@ import esriMap from '../../views/esriMap.vue'
    <script src="map.js"></script>
    ```
    
-2. 初始化参数：
+2. 创建`MapUtil`实例
+   
+   ```js
+   let mapUtil=new MapUtil( apiName:'高德'|'ArcGIS' )
+   ```
 
-    参数名  |值 |类型 |说明
-    -|-|-|-
-    apiName|`高德`, `ArcGIS`|`String`|指定API框架
+3. `initMap`初始化方法参数说明：
+
+参数名  |默认值 |类型  |是否必传 |说明
+-|-|-|-|-
+`center`|-|`Array`| 是 |地图初始化时的中心点，一组经纬度的数组，例如：`[116.397428, 39.90923]`
+`zoom`|` 10 ` | `Number` | 否 |地图初始化缩放等级
+`heading`|` -15 ` | `Number` | 否 |3D地图初始化相机朝向度数，正北方向顺时针取值
+`tilt`|` 45 ` | `Number` | 否 |3D地图初始化相机俯仰角，取值为0时相机视角为水平，取值为90时相机视角与地面垂直
+`callback`| - | `function` | 否 |地图初始化完成之后的回调函数
+
     
+1. 调用示例
+
     ```js
-    mapUtil.initMap({ apiName: '高德' })
+    mapUtil.initMap({      
+        center: [116.397428, 39.90923],
+        zoom: 12,
+        heading: -15,
+        tilt: 45,})
     ```
-
-
 
 ## 高德
 <amap />
