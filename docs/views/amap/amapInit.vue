@@ -2,8 +2,8 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 16:08:11
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-09-11 16:54:52
- * @FilePath: \GIS\gis\views\esriMap.vue
+ * @LastEditTime: 2024-09-27 11:24:35
+ * @FilePath: \code\docs\views\amap\amapInit.vue
  * @Description: 
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
@@ -13,34 +13,30 @@ import { onMounted, onUnmounted } from "vue";
 
 let mapUtil
 onMounted(() => {
-  import('../src/map').then(module => {
-    mapUtil = module.mapUtil
+  import('../../src/map').then(module => {
+    mapUtil = new module.MapUtil('高德')
     mapUtil.initMap({
-      apiName: 'ArcGIS',
       center: [116.397428, 39.90923],
       zoom: 12,
       heading: -15,
-      tilt: 45
+      tilt: 45,
     })
   })
-});
+})
 
 onUnmounted(() => {
   mapUtil.destroyMap()
-});
+})
+
 </script>
 
 <template>
-  <div id="viewDiv"></div>
+  <div id="container"></div>
 </template>
 
 <style scoped>
-@import "https://js.arcgis.com/4.30/@arcgis/core/assets/esri/themes/light/main.css";
-@import "https://js.arcgis.com/calcite-components/2.11.1/calcite.css";
-#viewDiv {
-  padding: 0;
-  margin: 0;
-  height: 400px;
+#container {
   width: 100%;
+  height: 400px;
 }
 </style>

@@ -17,7 +17,7 @@ import AMapLoader from "@amap/amap-jsapi-loader";
 //     center: [105.064969, 30.108144]
 // }),
 
-const amap = {
+export const amap = {
     _layerGroup: {},
     _evtGroup: {},
     initMap: function (params) {
@@ -93,9 +93,12 @@ const amap = {
                 gaodeMap.add(marker);
             this._layerGroup[opts.layerid].push(marker);
         });
-        return {layer:this._layerGroup[layerid],remove:()=>{
-            this.removeLayer(layerid)
-        }}
+        return {
+            layer: this._layerGroup[layerid],
+            remove: () => {
+                this.removeLayer(layerid)
+            }
+        }
         if (opts.minZoom) {
             let evtName = "zoomchange";
             let evtHandler = function (e) {
@@ -111,7 +114,7 @@ const amap = {
                     })
                 }
             };
-            map.on(evtName, evtHandler)
+            gaodeMap.on(evtName, evtHandler)
             if (!this._evtGroup[opts.layerid]) {
                 this._evtGroup[opts.layerid] = {
                     "zoomchange": evtHandler
@@ -166,7 +169,7 @@ const amap = {
             zIndex: opts.zIndex || 100
         };
         if (opts.minZoom) {
-            let curZoom = map.getZoom();
+            let curZoom = gaodeMap.getZoom();
             if (curZoom < opts.minZoom) {
                 markerOpts.visible = false
             }
@@ -213,7 +216,7 @@ const amap = {
             return;
         if (this._layerGroup[name]) {
             this._layerGroup[name].forEach(item => {
-                map.remove(item);
+                gaodeMap.remove(item);
             });
             this._layerGroup[name] = [];
             delete this._layerGroup[name];
@@ -221,11 +224,11 @@ const amap = {
         //解绑事件
         if (this._evtGroup[name]) {
             for (let key in this._evtGroup[name]) {
-                map.off(key, this._evtGroup[name][key])
+                gaodeMap.off(key, this._evtGroup[name][key])
             }
             this._evtGroup[name] = null;
         }
-        map.clearInfoWindow();
+        gaodeMap.clearInfoWindow();
     },
     /**
      * 清除所有图层
@@ -269,7 +272,7 @@ const amap = {
         // this._popOnShow = true;
         attributes.popDom.style.display = "block";
         $(".panel-close-tc").off("click").on("click", function () {
-            map.clearInfoWindow();
+            gaodeMap.clearInfoWindow();
         });
     },
     /**
@@ -298,7 +301,7 @@ const amap = {
                     });
                     polygons.push(polygon);
                 }
-                map.add(polygons)
+                gaodeMap.add(polygons)
             }
             if (center) {
                 let label = new AMap.LabelMarker({
@@ -483,4 +486,3 @@ const amap = {
         return gcjCoords
     },
 }
-export { amap }

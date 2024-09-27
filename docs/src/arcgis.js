@@ -68,9 +68,6 @@ export const arcgis = {
             console.error('上图数据不可为空！', layercfg.layerid)
             return
         };
-        if (!this._checkBeforeLoad(layerid)) {
-            return
-        }
         const _data = []
         const _attr = {}
         data.forEach((item, idx) => {
@@ -96,46 +93,9 @@ export const arcgis = {
             if (cluster) item.id = item.guid       //聚合功能data必传id字段
         })
         const imgUrl = (iconcfg.image.indexOf(".png") >= 0 || iconcfg.image.indexOf(".gif") >= 0) ? iconcfg.image : null
-        if (data.length > 1 && cluster) {//如果cluster为true则进行聚合，默认采用聚合
-            let uniqueCfg = { valueArr: [], imgArr: [], sizeArr: [] }
-            if (iconlist.list && iconlist.field) {
-                iconlist.list.forEach(item => {
-                    uniqueCfg.valueArr.push(item.value)
-                    uniqueCfg.imgArr.push(item.src)
-                    uniqueCfg.sizeArr.push(item.size)
-                })
-                uniqueCfg.field = iconlist.field
-            }
-            this.loadClusterLayer({
-                layerid: layerid,
-                data: data,
-                lyrCfg: {
-                    field: "id", // 接口返回值：唯一的字段
-                    clusterImg: imgUrl || `https://csdn.dsjj.jinhua.gov.cn:8101/static/EGS(v1.0.0)/lib/EGS(v1.0.0)/image/spritesImage/${iconcfg.image || "bus"}.png` || '', // 聚合图标地址
-                    iconImg: imgUrl || `https://csdn.dsjj.jinhua.gov.cn:8101/static/EGS(v1.0.0)/lib/EGS(v1.0.0)/image/spritesImage/${iconcfg.image || "bus"}.png`, // 默认图标地址
-                    criticalZoom: 17,
-                },
-                popCfg: {
-                    title: popcfg.title,//标题
-                    dict: popcfg.dict,
-                    attr: _attr,
-                    onclick
-                },
-                uniqueCfg,
-            });
-            return;
-        }
         let rendererIcon = {
             size: iconcfg.size || 64, // 图片大小
             src: imgUrl || `https://csdn.dsjj.jinhua.gov.cn:8101/static/EGS(v1.0.0)/lib/EGS(v1.0.0)/image/spritesImage/${iconcfg.image || "bus"}.png`, // 图片src
-        }
-        if (iconlist) {
-            rendererIcon.field = iconlist.field
-            rendererIcon.uniqueValueInfos = iconlist.list
-            // 解决数据只有一条的时候，uniqueValueInfos不起作用的问题，mod 2023年5月11日
-            if (data.length == 1 && iconlist.field && iconlist.list && data[0][iconlist.field] && iconlist.list[data[0][iconlist.field]]) {
-                rendererIcon.src = iconlist.list[data[0][iconlist.field]]
-            }
         }
         gis.loadArcgisLayer(viewer, {
             code: 3,
