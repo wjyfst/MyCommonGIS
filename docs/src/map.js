@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-01-19 16:35:21
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-09-27 14:28:29
+ * @LastEditTime: 2024-10-08 16:33:25
  * @FilePath: \code\docs\src\map.js
  * @Description: 
  * 
@@ -11,14 +11,14 @@
 import { arcgis } from "./arcgis";
 import { amap } from "./amap";
 
+const mapAPIEnum = {
+    '高德': { api: amap },
+    'ArcGIS': { api: arcgis }
+};
 export class MapUtil{
     constructor(apiName){
-        this.mapAPI=this.mapAPIEnum[apiName].api
+        this.mapAPI = mapAPIEnum[apiName].api
     }
-    mapAPIEnum= {
-        '高德': { api: amap },
-        'ArcGIS': { api: arcgis }
-    };
     mapAPI={};//存放当前api
     layers={};//图层管理器
     events= {};

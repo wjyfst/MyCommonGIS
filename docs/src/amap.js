@@ -71,6 +71,7 @@ export const amap = {
         let layerid = opts.layerid || layercfg.layerid
         let data = opts.data
         let iconlist = iconcfg.iconlist || {}
+        let callback = opts.callback || null
         if (!opts.layerid)
             return;
         if (!this._layerGroup[opts.layerid]) {
@@ -93,36 +94,37 @@ export const amap = {
                 gaodeMap.add(marker);
             this._layerGroup[opts.layerid].push(marker);
         });
+        if(callback&& typeof callback =='function') callback(this._layerGroup[opts.layerid])
         return {
             layer: this._layerGroup[layerid],
             remove: () => {
                 this.removeLayer(layerid)
             }
         }
-        if (opts.minZoom) {
-            let evtName = "zoomchange";
-            let evtHandler = function (e) {
-                let curZoom = e.target.getZoom();
-                if (curZoom >= opts.minZoom) {
-                    this._layerGroup[opts.layerid].forEach(marker => {
-                        marker.show();
-                    })
-                }
-                else {
-                    this._layerGroup[opts.layerid].forEach(marker => {
-                        marker.hide();
-                    })
-                }
-            };
-            gaodeMap.on(evtName, evtHandler)
-            if (!this._evtGroup[opts.layerid]) {
-                this._evtGroup[opts.layerid] = {
-                    "zoomchange": evtHandler
-                }
-            } else {
-                Object.assign(this._evtGroup[opts.layerid], { "zoomchange": evtHandler })
-            }
-        }
+        // if (opts.minZoom) {
+        //     let evtName = "zoomchange";
+        //     let evtHandler = function (e) {
+        //         let curZoom = e.target.getZoom();
+        //         if (curZoom >= opts.minZoom) {
+        //             this._layerGroup[opts.layerid].forEach(marker => {
+        //                 marker.show();
+        //             })
+        //         }
+        //         else {
+        //             this._layerGroup[opts.layerid].forEach(marker => {
+        //                 marker.hide();
+        //             })
+        //         }
+        //     };
+        //     gaodeMap.on(evtName, evtHandler)
+        //     if (!this._evtGroup[opts.layerid]) {
+        //         this._evtGroup[opts.layerid] = {
+        //             "zoomchange": evtHandler
+        //         }
+        //     } else {
+        //         Object.assign(this._evtGroup[opts.layerid], { "zoomchange": evtHandler })
+        //     }
+        // }
     },
     /**
      * 生成Marker
@@ -156,8 +158,8 @@ export const amap = {
         }
         let icon = new AMap.Icon(iconOpts);
         let offset;
-        if (opts.offsetX && opts.offsetY) {
-            offset = new AMap.Pixel(opts.offsetX * 1, opts.offsetY * 1)
+        if (opts.iconCfg.offsetX && opts.iconCfg.offsetY) {
+            offset = new AMap.Pixel(opts.iconCfg.offsetX * 1, opts.iconCfg.offsetY * 1)
         }
         else {
             offset = new AMap.Pixel(0, 0)
