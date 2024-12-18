@@ -1,7 +1,10 @@
 import Map from "@arcgis/core/Map";
 import SceneView from "@arcgis/core/views/SceneView";
+import loadArcgisLayer from "./arcgis-utils/loadArcgisLayer";
 
 export const arcgis = {
+    _layerGroup: {},
+    _evtGroup: {},
     initMap(params) {
         window.esriMap = new Map({
             basemap: "topo-vector"
@@ -36,6 +39,8 @@ export const arcgis = {
             })
             //移除工具
             esriView.ui.remove(esriView.ui.getComponents().filter(val => val.label != '属性'))
+
+            if(params.callback)params.callback()
         })
 
     },
@@ -55,7 +60,7 @@ export const arcgis = {
      */
     loadPointLayer(opts) {
         let datacfg = opts.datacfg || {};
-        let iconcfg = opts.iconcfg || { image: "" };
+        let iconcfg = opts.iconCfg || { url: "" };
         let labelcfg = opts.labelcfg || {};
         let layercfg = opts.layercfg || {};
         let popcfg = opts.popcfg || {}
@@ -63,7 +68,8 @@ export const arcgis = {
         let layerid = opts.layerid || layercfg.layerid
         let data = opts.data
         let iconlist = iconcfg.iconlist || {}
-        const { cluster = true, viewer = this.mapview } = opts
+        let callback = opts.callback || null
+        const { cluster = true, viewer = esriView } = opts
         if (!data || data.length == 0) {
             console.error('上图数据不可为空！', layercfg.layerid)
             return
@@ -72,7 +78,7 @@ export const arcgis = {
         const _attr = {}
         data.forEach((item, idx) => {
             item.layerid = layerid
-            item.guid = this.guid()
+            // item.guid = this.guid()
             item.objid = idx
             let lng = item[datacfg.lngfield] * 1 || item.lng * 1;
             let lat = item[datacfg.latfield] * 1 || item.lat * 1;
@@ -92,81 +98,81 @@ export const arcgis = {
             if (!item.name) item.name = item.guid   //聚合功能data必传name字段
             if (cluster) item.id = item.guid       //聚合功能data必传id字段
         })
-        const imgUrl = (iconcfg.image.indexOf(".png") >= 0 || iconcfg.image.indexOf(".gif") >= 0) ? iconcfg.image : null
+        const imgUrl = (iconcfg.url.indexOf(".png") >= 0 || iconcfg.url.indexOf(".gif") >= 0) ? iconcfg.url : null
         let rendererIcon = {
-            size: iconcfg.size || 64, // 图片大小
-            src: imgUrl || `https://csdn.dsjj.jinhua.gov.cn:8101/static/EGS(v1.0.0)/lib/EGS(v1.0.0)/image/spritesImage/${iconcfg.image || "bus"}.png`, // 图片src
+            size: iconcfg.size || 40, // 图片大小
+            src: imgUrl, // 图片src
         }
-        gis.loadArcgisLayer(viewer, {
+        loadArcgisLayer(viewer, {
             code: 3,
             data: _data,
             type: "customFeature",
             objectIdField: "objid",
             rendererIcon,
         }).then(res => {
-            const pointEventId = ArcGisUtils.mapClickEventHandle.add(res.id, (point, graphic, graphics) => {
-                const pointStr = `${point.x},${point.y}`
-                if (mapUtil._clickEvtPoint == pointStr) return
-                mapUtil._clickEvtPoint = pointStr
-                if (graphic && graphics.length == 1) {
-                    graphic.attributes.position = point
-                    graphic.attributes.data = _attr[graphic.attributes.guid]
-                    let graArray = []
-                    if (graphics) {
-                        graphics.forEach(item => {
-                            item.attributes.data = _attr[item.attributes.guid]
-                            graArray.push(item.attributes)
-                        })
-                    }
-                    if (onclick) onclick(graphic.attributes, graArray)
-                    if (popcfg.dict) {
-                        this._createPopup({
-                            layerid,
-                            position: graphic.geometry,
-                            dict: popcfg.dict,
-                            attr: graphic.attributes,
-                            title: popcfg.title || "详情",
-                            offset: popcfg.offset,
-                        })
-                    }
+            // const pointEventId = ArcGisUtils.mapClickEventHandle.add(res.id, (point, graphic, graphics) => {
+            //     const pointStr = `${point.x},${point.y}`
+            //     if (mapUtil._clickEvtPoint == pointStr) return
+            //     mapUtil._clickEvtPoint = pointStr
+            //     if (graphic && graphics.length == 1) {
+            //         graphic.attributes.position = point
+            //         graphic.attributes.data = _attr[graphic.attributes.guid]
+            //         let graArray = []
+            //         if (graphics) {
+            //             graphics.forEach(item => {
+            //                 item.attributes.data = _attr[item.attributes.guid]
+            //                 graArray.push(item.attributes)
+            //             })
+            //         }
+            //         if (onclick) onclick(graphic.attributes, graArray)
+            //         if (popcfg.dict) {
+            //             this._createPopup({
+            //                 layerid,
+            //                 position: graphic.geometry,
+            //                 dict: popcfg.dict,
+            //                 attr: graphic.attributes,
+            //                 title: popcfg.title || "详情",
+            //                 offset: popcfg.offset,
+            //             })
+            //         }
 
-                } else if (graphics.length > 1) {
-                    const datas = [];
-                    for (let i = 0; i < graphics.length; i++) {
-                        const { attributes } = graphics[i];
-                        attributes.data = _attr[attributes.guid]
-                        datas.push(attributes)
-                    }
-                    graphic.attributes.data = _attr[graphic.attributes.guid]
-                    if (onclick) {
-                        let graArray = []
-                        graphics.forEach(item => {
-                            item.attributes.data = _attr[item.attributes.guid]
-                            graArray.push(item.attributes)
-                        })
-                        onclick(graphic.attributes, graArray)
-                    } else {
-                        this._createPopup({
-                            layerid,
-                            position: point,
-                            dict: popcfg.dict,
-                            attr: datas,
-                            title: popcfg.title || "详情",
-                            offset: popcfg.offset,
-                        })
-                    }
-                }
-            })
-            this._sortClickEvts()
-            //鼠标滑动事件
-            if (opts.onblur && !this.blurevts[layerid]) {
-                this.blurevts[layerid] = function (e, pt) {
-                    if (layerid == e.layerid)
-                        opts.onblur({ ...e, data: _attr[e.guid], position: pt })
-                }
-            }
-            this.layers[layerid] = res
-            if (opts.onload) opts.onload(res)
+            //     } else if (graphics.length > 1) {
+            //         const datas = [];
+            //         for (let i = 0; i < graphics.length; i++) {
+            //             const { attributes } = graphics[i];
+            //             attributes.data = _attr[attributes.guid]
+            //             datas.push(attributes)
+            //         }
+            //         graphic.attributes.data = _attr[graphic.attributes.guid]
+            //         if (onclick) {
+            //             let graArray = []
+            //             graphics.forEach(item => {
+            //                 item.attributes.data = _attr[item.attributes.guid]
+            //                 graArray.push(item.attributes)
+            //             })
+            //             onclick(graphic.attributes, graArray)
+            //         } else {
+            //             this._createPopup({
+            //                 layerid,
+            //                 position: point,
+            //                 dict: popcfg.dict,
+            //                 attr: datas,
+            //                 title: popcfg.title || "详情",
+            //                 offset: popcfg.offset,
+            //             })
+            //         }
+            //     }
+            // })
+            // this._sortClickEvts()
+            // //鼠标滑动事件
+            // if (opts.onblur && !this.blurevts[layerid]) {
+            //     this.blurevts[layerid] = function (e, pt) {
+            //         if (layerid == e.layerid)
+            //             opts.onblur({ ...e, data: _attr[e.guid], position: pt })
+            //     }
+            // }
+            this._layerGroup[layerid] = res
+            if (callback) callback(res)
         })
     },
     /**
@@ -176,14 +182,14 @@ export const arcgis = {
      */
     removeLayer(layerid) {
         if (!layerid) return
-        if (this.layers[layerid]) {
+        if (this._layerGroup[layerid]) {
             if (this.mapview) {
-                if (this.layers[layerid].remove) {
-                    this.layers[layerid].remove()
-                    delete this.layers[layerid]
+                if (this._layerGroup[layerid].remove) {
+                    this._layerGroup[layerid].remove()
+                    delete this._layerGroup[layerid]
                 } else {
-                    this.mapview.map.remove(this.layers[layerid])
-                    delete this.layers[layerid]
+                    this.mapview.map.remove(this._layerGroup[layerid])
+                    delete this._layerGroup[layerid]
                 }
             }
         }
@@ -200,9 +206,9 @@ export const arcgis = {
      * @param {*} layerlist
      * @return {*}
      */
-    removeAllLayers(layerlist = []) {
-        Object.keys(this.layers).forEach(layerid => {
-            if (this.layers[layerid]) {
+    removeAll_layerGroup(layerlist = []) {
+        Object.keys(this._layerGroup).forEach(layerid => {
+            if (this._layerGroup[layerid]) {
                 if (layerlist && layerlist.length > 0) {
                     if (layerlist.includes(layerid)) this.removeLayer(layerid)
                 } else {

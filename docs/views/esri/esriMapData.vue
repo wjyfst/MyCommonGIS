@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 16:08:11
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-10-28 16:23:01
+ * @LastEditTime: 2024-12-18 16:32:06
  * @FilePath: \code\docs\views\esri\esriMapData.vue
  * @Description: 
  * 
@@ -45,7 +45,7 @@ const loadPointLayerDemo = () => {
       offsetY: -50,
     },
     callback:(layer)=>{
-      console.log(mapUtil);
+      console.log(layer);
     }
   })
 }
