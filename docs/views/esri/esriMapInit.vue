@@ -2,26 +2,25 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 16:08:11
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-09-25 11:38:42
- * @FilePath: \gis\views\esriMap.vue
+ * @LastEditTime: 2024-10-28 16:23:18
+ * @FilePath: \code\docs\views\esri\esriMapInit.vue
  * @Description: 
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
 -->
 <script setup>
 import { onMounted, onUnmounted } from "vue";
+import { MapUtil } from "../../src/map";
 
 let mapUtil
 onMounted(() => {
-  import('../../src/map').then(module => {
-    mapUtil = new module.MapUtil('ArcGIS')
+    mapUtil = new MapUtil('ArcGIS')
     mapUtil.initMap({
       center: [116.397428, 39.90923],
       zoom: 12,
       heading: -15,
       tilt: 45
     })
-  })
 });
 
 onUnmounted(() => {

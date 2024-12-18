@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-01-19 16:35:21
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-10-08 16:33:25
+ * @LastEditTime: 2024-10-28 16:25:59
  * @FilePath: \code\docs\src\map.js
  * @Description: 
  * 
@@ -15,6 +15,10 @@ const mapAPIEnum = {
     '高德': { api: amap },
     'ArcGIS': { api: arcgis }
 };
+/**
+ * @description: 参数apiName:'高德'||'ArcGIS'
+ * @return {*}
+ */
 export class MapUtil{
     constructor(apiName){
         this.mapAPI = mapAPIEnum[apiName].api

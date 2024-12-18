@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 16:08:11
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-10-08 16:39:13
+ * @LastEditTime: 2024-10-28 16:17:25
  * @FilePath: \code\docs\views\amap\amapData.vue
  * @Description: 
  * 
@@ -10,11 +10,11 @@
 -->
 <script setup>
 import { onMounted, onUnmounted } from "vue";
+import { MapUtil } from "../../src/map";
 
 let mapUtil
 onMounted(() => {
-  import('../../src/map').then(module => {
-    mapUtil = new module.MapUtil('高德')
+    mapUtil = new MapUtil('高德')
     mapUtil.initMap({
       center: [116.397428, 39.90923],
       zoom: 12,
@@ -24,7 +24,6 @@ onMounted(() => {
         loadPointLayerDemo()
       }
     })
-  })
 })
 
 onUnmounted(() => {

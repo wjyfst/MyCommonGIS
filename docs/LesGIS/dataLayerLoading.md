@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 15:21:10
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-10-09 10:25:16
+ * @LastEditTime: 2024-10-28 16:54:17
  * @FilePath: \code\docs\LesGIS\dataLayerLoading.md
  * @Description: 
  * 
@@ -10,8 +10,8 @@
 -->
 
 <script setup>
-import amap from '../views/amap/amapData.vue'
-import esriMap from '../views/esri/esriMapData.vue'
+import amapData from '../views/amap/amapData.vue'
+import esriMapData from '../views/esri/esriMapData.vue'
 </script>
 
 # 基础地理数据
@@ -60,7 +60,14 @@ import esriMap from '../views/esri/esriMapData.vue'
     }
   })
 ```
-<amap />
+
+### 高德示例
+
+<amapData />
+
+### ArcGIS示例
+
+<esriMapData />
 
 ## 线数据
 ## 面数据
