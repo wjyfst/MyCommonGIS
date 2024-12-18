@@ -53,7 +53,7 @@ export const amap = {
                 console.log(e);
             });
     },
-    destroy:function(){
+    destroy: function () {
         window.gaodeMap?.destroy()
     },
     /**
@@ -94,7 +94,7 @@ export const amap = {
                 gaodeMap.add(marker);
             this._layerGroup[opts.layerid].push(marker);
         });
-        if(callback&& typeof callback =='function') callback(this._layerGroup[opts.layerid])
+        if (callback && typeof callback == 'function') callback(this._layerGroup[opts.layerid])
         return {
             layer: this._layerGroup[layerid],
             remove: () => {

@@ -31,11 +31,11 @@ export const arcgis = {
         esriView.when(() => {
             //初始化相机角度
             esriView.goTo({
-                heading: -params.heading ,
+                heading: -params.heading,
                 tilt: params.tilt
             })
             //移除工具
-            esriView.ui.remove(esriView.ui.getComponents().filter(val=>val.label!='属性'))
+            esriView.ui.remove(esriView.ui.getComponents().filter(val => val.label != '属性'))
         })
 
     },

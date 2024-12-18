@@ -14,13 +14,13 @@ import { MapUtil } from "../../src/map";
 
 let mapUtil
 onMounted(() => {
-    mapUtil = new MapUtil('高德')
-    mapUtil.initMap({
-      center: [116.397428, 39.90923],
-      zoom: 12,
-      heading: -15,
-      tilt: 45,
-    })
+  mapUtil = new MapUtil('高德')
+  mapUtil.initMap({
+    center: [116.397428, 39.90923],
+    zoom: 12,
+    heading: -15,
+    tilt: 45,
+  })
 })
 
 onUnmounted(() => {

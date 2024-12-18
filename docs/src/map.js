@@ -19,25 +19,25 @@ const mapAPIEnum = {
  * @description: 参数apiName:'高德'||'ArcGIS'
  * @return {*}
  */
-export class MapUtil{
-    constructor(apiName){
+export class MapUtil {
+    constructor(apiName) {
         this.mapAPI = mapAPIEnum[apiName].api
     }
-    mapAPI={};//存放当前api
-    layers={};//图层管理器
-    events= {};
-    popups= {};
-    mapclick= null;
-    layerstate= {};
-    _clickEvts= {};
-    _clickEvtPoint= "";
+    mapAPI = {};//存放当前api
+    layers = {};//图层管理器
+    events = {};
+    popups = {};
+    mapclick = null;
+    layerstate = {};
+    _clickEvts = {};
+    _clickEvtPoint = "";
 
     /**
     * @description: 初始化
     * @param {*} params
     * @return {*}
     */
-    initMap=(params) =>{
+    initMap = (params) => {
         this.mapAPI.initMap(params)
     };
 
@@ -45,9 +45,9 @@ export class MapUtil{
      * @description: 销毁地图
      * @return {*}
      */
-    destroyMap=()=>{
+    destroyMap = () => {
         this.mapAPI.destroy()
-        Object.keys(this.layers).forEach(layer=>{
+        Object.keys(this.layers).forEach(layer => {
             this.removeLayer(layer)
         })
     };
@@ -56,7 +56,7 @@ export class MapUtil{
      * @param {*} layerid
      * @return {*}
      */
-    _checkBeforeLoad=(layerid)=> {
+    _checkBeforeLoad = (layerid) => {
         if (!layerid) {
             console.error('layerid不可为空')
             return false
@@ -73,7 +73,7 @@ export class MapUtil{
      * @param {*} opts
      * @return {*}
      */
-    loadPointLayer=(opts) =>{
+    loadPointLayer = (opts) => {
         let layercfg = opts.layercfg || {};
         let layerid = opts.layerid || layercfg.layerid
         let data = opts.data
@@ -91,16 +91,16 @@ export class MapUtil{
      * @param {*} layerid
      * @return {*}
      */
-    removeLayer=(layerid)=> {
+    removeLayer = (layerid) => {
         if (!layerid) return
         if (this.layers[layerid]) {
-                if (this.layers[layerid].remove) {
-                    this.layers[layerid].remove()
-                    delete this.layers[layerid]
-                } else {
-                    this.mapAPI.api.remove(this.layers[layerid])
-                    delete this.layers[layerid]
-                }
+            if (this.layers[layerid].remove) {
+                this.layers[layerid].remove()
+                delete this.layers[layerid]
+            } else {
+                this.mapAPI.api.remove(this.layers[layerid])
+                delete this.layers[layerid]
+            }
         }
         // if (this.blurevts[layerid]) {
         //     delete this.blurevts[layerid]
@@ -115,7 +115,7 @@ export class MapUtil{
      * @param {*} layerlist
      * @return {*}
      */
-    removeAllLayers=(layerlist = [])=> {
+    removeAllLayers = (layerlist = []) => {
         Object.keys(this.layers).forEach(layerid => {
             if (this.layers[layerid]) {
                 if (layerlist && layerlist.length > 0) {
@@ -131,7 +131,7 @@ export class MapUtil{
      * @description: 坐标系转换功能实现
      * @return {*}
      */
-    _srConvert= ()=>{
+    _srConvert = () => {
         let x_PI = 3.14159265358979324 * 3000.0 / 180.0;
         let PI = 3.1415926535897932384626;
         let a = 6378245.0;
@@ -269,7 +269,7 @@ export class MapUtil{
      * @param {*} sr
      * @return {*}
      */
-    _srConvertInterface= (lng, lat, sr)=> {
+    _srConvertInterface = (lng, lat, sr) => {
         let _srConvert = new this._srConvert;
         let gcjCoords;
         if (sr === "bd09") {
@@ -283,7 +283,7 @@ export class MapUtil{
         }
         return gcjCoords
     };
-    
+
     /**
      * @description: ajax
      * @param {*} url
@@ -292,7 +292,7 @@ export class MapUtil{
      * @param {*} errorfn
      * @return {*}
      */
-    _ajaxQuery=(url, data, successfn, errorfn) =>{
+    _ajaxQuery = (url, data, successfn, errorfn) => {
         data = (data == null || data == "" || typeof (data) == "undefined") ? {
             "date": new Date().getTime()
         }
@@ -312,5 +312,5 @@ export class MapUtil{
             }
         });
     };
-    
+
 }

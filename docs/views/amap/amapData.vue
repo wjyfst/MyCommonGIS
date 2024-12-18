@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 16:08:11
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-10-28 16:17:25
+ * @LastEditTime: 2024-12-18 15:33:36
  * @FilePath: \code\docs\views\amap\amapData.vue
  * @Description: 
  * 
@@ -14,16 +14,16 @@ import { MapUtil } from "../../src/map";
 
 let mapUtil
 onMounted(() => {
-    mapUtil = new MapUtil('高德')
-    mapUtil.initMap({
-      center: [116.397428, 39.90923],
-      zoom: 12,
-      heading: -15,
-      tilt: 45,
-      callback: () => {
-        loadPointLayerDemo()
-      }
-    })
+  mapUtil = new MapUtil('高德')
+  mapUtil.initMap({
+    center: [116.397428, 39.90923],
+    zoom: 12,
+    heading: -15,
+    tilt: 45,
+    callback: () => {
+      loadPointLayerDemo()
+    }
+  })
 })
 
 onUnmounted(() => {
@@ -38,13 +38,13 @@ const loadPointLayerDemo = () => {
       { lng: 116.366428, lat: 39.91923, name: 'point3' }
     ],
     iconCfg: {
-      url:'../src/img/icon.png',
+      url: '../src/img/icon.png',
       width: 40,
       height: 50,
       offsetX: -20,
       offsetY: -50,
     },
-    callback:(layer)=>{
+    callback: (layer) => {
       console.log(mapUtil);
     }
   })

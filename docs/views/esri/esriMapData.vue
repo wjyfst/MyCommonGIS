@@ -14,16 +14,16 @@ import { MapUtil } from "../../src/map";
 
 let mapUtil
 onMounted(() => {
-    mapUtil = new MapUtil('ArcGIS')
-    mapUtil.initMap({
-      center: [116.397428, 39.90923],
-      zoom: 12,
-      heading: -15,
-      tilt: 45,
-      callback: () => {
-        loadPointLayerDemo()
-      }
-    })
+  mapUtil = new MapUtil('ArcGIS')
+  mapUtil.initMap({
+    center: [116.397428, 39.90923],
+    zoom: 12,
+    heading: -15,
+    tilt: 45,
+    callback: () => {
+      loadPointLayerDemo()
+    }
+  })
 });
 
 onUnmounted(() => {
@@ -59,6 +59,7 @@ const loadPointLayerDemo = () => {
 <style scoped>
 @import "https://js.arcgis.com/4.30/@arcgis/core/assets/esri/themes/light/main.css";
 @import "https://js.arcgis.com/calcite-components/2.11.1/calcite.css";
+
 #viewDiv {
   padding: 0;
   margin: 0;
