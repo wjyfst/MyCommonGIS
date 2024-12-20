@@ -27,12 +27,12 @@ export const amap = {
             plugins: ["AMap.Scale"], //需要使用的的插件列表，如比例尺'AMap.Scale'，支持添加多个如：['...','...']
         })
             .then((AMap) => {
-                window.gaodeMap = new AMap.Map("container", {
+                window.gaodeMap = new AMap.Map(params.container || "container", {
                     mapStyle: 'amap://styles/76af0e5e254ef97f4f3075382807af23',
                     resizeEnable: true,
                     rotateEnable: true,
                     pitchEnable: true,
-                    zoom: 12,
+                    zoom: params.zoom,
                     pitch: params.tilt,
                     rotation: params.heading,
                     viewMode: '3D',//开启3D视图,默认为关闭

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
-    "@arcgis/core": "^4.30.9"
+    "@arcgis/core": "^4.30.9",
+    "@supabase/supabase-js": "^2.47.9"
   }
 }

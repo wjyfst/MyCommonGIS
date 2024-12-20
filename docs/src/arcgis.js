@@ -1,7 +1,7 @@
 import Map from "@arcgis/core/Map";
 import SceneView from "@arcgis/core/views/SceneView";
-import loadArcgisLayer from "./arcgis-utils/loadArcgisLayer";
-
+// import gis from "./arcgis-utils";
+import { gis } from "./arcgis-utils";
 export const arcgis = {
     _layerGroup: {},
     _evtGroup: {},
@@ -11,9 +11,9 @@ export const arcgis = {
         });
 
         window.esriView = new SceneView({
-            container: "viewDiv", // reference the div id
+            container: params.container||"viewDiv", // reference the div id
             map: esriMap,
-            zoom: 12,
+            zoom: params.zoom,
             center: params.center,
             // camera: {
             //     position: {
@@ -40,7 +40,7 @@ export const arcgis = {
             //移除工具
             esriView.ui.remove(esriView.ui.getComponents().filter(val => val.label != '属性'))
 
-            if(params.callback)params.callback()
+            if (params.callback) params.callback()
         })
 
     },
@@ -100,10 +100,10 @@ export const arcgis = {
         })
         const imgUrl = (iconcfg.url.indexOf(".png") >= 0 || iconcfg.url.indexOf(".gif") >= 0) ? iconcfg.url : null
         let rendererIcon = {
-            size: iconcfg.size || 40, // 图片大小
+            size: iconcfg.width || 40, // 图片大小
             src: imgUrl, // 图片src
         }
-        loadArcgisLayer(viewer, {
+        gis.loadArcgisLayer(viewer, {
             code: 3,
             data: _data,
             type: "customFeature",
@@ -175,6 +175,41 @@ export const arcgis = {
             if (callback) callback(res)
         })
     },
+    async loadLineLayer(opts) {
+        let { layerid, lines, geojson, style } = opts
+        let data = []
+        if (lines) {
+            geojson = {
+                "type": "FeatureCollection",
+                "features": []
+            }
+            lines.forEach((item, idx) => {
+                let line = {
+                    "type": "Feature",
+                    "properties": {},
+                    "geometry": {
+                        "coordinates": [item],
+                        "type": "LineString"
+                    }
+                }
+                geojson.features.push(line)
+            })
+        }
+        geojson.features.forEach(item => {
+            data.push({
+                paths: item.geometry.coordinates,
+                attributes: item.properties
+            })
+        })
+        let layer = await gis.addLineLayer({
+            view:esriView,
+            data,
+            width: style.width || 5,
+            color: style.color || "#00ff00"
+        })
+        this._layerGroup[layerid] = layer
+
+    },
     /**
      * @description: 移除单个图层
      * @param {*} layerid
@@ -193,13 +228,13 @@ export const arcgis = {
                 }
             }
         }
-        if (this.blurevts[layerid]) {
-            delete this.blurevts[layerid]
-        }
-        if (layerid == this.popups.layerid) {
-            if (gis.mapPopupWidget._popupRef) gis.mapPopupWidget.close()
-            this.popups.layerid = null
-        }
+        // if (this.blurevts[layerid]) {
+        //     delete this.blurevts[layerid]
+        // }
+        // if (layerid == this.popups.layerid) {
+        //     if (gis.mapPopupWidget._popupRef) gis.mapPopupWidget.close()
+        //     this.popups.layerid = null
+        // }
     },
     /**
      * @description: 移除所有图层或根据layerlist移除
