@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 16:08:11
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-19 15:29:33
+ * @LastEditTime: 2024-12-25 15:33:36
  * @FilePath: \code\docs\views\amap\amapData.vue
  * @Description: 
  * 
@@ -22,6 +22,7 @@ onMounted(() => {
     tilt: 45,
     callback: () => {
       loadPointLayerDemo()
+      loadLineLayerDemo()
     }
   })
 })
@@ -48,6 +49,24 @@ const loadPointLayerDemo = () => {
     },
     callback: (layer) => {
       console.log(mapUtil);
+    }
+  })
+}
+const loadLineLayerDemo = () => {
+  mapUtil.loadLineLayer({
+    layerid: 'PolylineLayer',
+    lines: [
+      [
+        [116.40263981407037, 39.9319649160779,0],
+        [116.39125609711363, 39.90734360237673,0],
+        [116.39048947611673, 39.92137584534936,0],
+        [116.37116642734117, 39.921171821696646,0]
+      ]
+    ],
+    sr: 'wgs84',
+    style: {
+      width: 5,
+      color: '#00ff00'
     }
   })
 }

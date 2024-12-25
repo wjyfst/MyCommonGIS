@@ -209,6 +209,41 @@ export const amap = {
         marker.setExtData(item);
         return marker
     },
+
+    loadLineLayer: function (opts) {
+        if (!opts.layerid) return;
+        if (!this._layerGroup[opts.layerid]) {
+            this._layerGroup[opts.layerid] = [];
+        }
+        else { return; }
+        let layerid = opts.layerid || layercfg.layerid
+        let lines = opts.lines;
+        let style = opts.style;
+        let callback = opts.callback || null;
+
+        lines.forEach(line => {
+            // 创建一个折线覆盖物对象
+            let polyline = new AMap.Polyline({
+                path: line.map(coord=>{
+                    return this._srConvertInterface(coord[0] * 1, coord[1] * 1, opts.sr)
+                }),  // 这里只处理了lines数组中的第一个元素（如果有多个可以循环处理）
+                strokeColor: style.color,
+                strokeWeight: style.width
+            });
+
+            // 将折线添加到地图上
+            gaodeMap.add(polyline);
+            this._layerGroup[layerid].push(polyline);
+        })
+        if (callback && typeof callback == 'function') callback(this._layerGroup[layerid])
+        return {
+            layer: this._layerGroup[layerid],
+            remove: () => {
+                this.removeLayer(layerid)
+            }
+        }
+    },
+
     /**
      * 清除图层和相关事件
      * @param name
