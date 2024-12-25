@@ -1,6 +1,6 @@
 import layerCreatAsync from "./layerCreatAsync";
-import Polyline from "@arcgis/core/geometry/Polyline.js";
-import Graphic from "@arcgis/core/Graphic.js";
+import Polyline from "@geoscene/core/geometry/Polyline.js";
+import Graphic from "@geoscene/core/Graphic.js";
 
 function _getFields(objectId, attributes) {
   const fields = [{ name: objectId, alias: "OBJECTID", type: "oid" }];

@@ -2,18 +2,18 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-01-19 16:35:21
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-20 14:53:24
+ * @LastEditTime: 2024-12-25 11:08:05
  * @FilePath: \code\docs\src\map.js
  * @Description: 
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
  */
-import { arcgis } from "./arcgis";
+import { geoscene } from "./geoscene";
 import { amap } from "./amap";
 
 const mapAPIEnum = {
     '高德': { api: amap },
-    'ArcGIS': { api: arcgis }
+    '易智瑞': { api: geoscene }
 };
 /**
  * @description: 参数apiName:'高德'||'ArcGIS'
@@ -21,6 +21,9 @@ const mapAPIEnum = {
  */
 export class MapUtil {
     constructor(apiName) {
+        if (!apiName) { console.error('清输入框架名称：“高德”/“易智瑞”'); return }
+        if (!mapAPIEnum[apiName]) { console.error('目前不支持' + apiName + '框架'); return }
+        
         this.mapAPI = mapAPIEnum[apiName].api
     }
     mapAPI = {};//存放当前api

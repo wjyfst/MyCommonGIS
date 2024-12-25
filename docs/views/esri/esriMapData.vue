@@ -2,8 +2,8 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 16:08:11
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-20 15:40:59
- * @FilePath: \code\docs\views\esri\esriMapDataPoints.vue
+ * @LastEditTime: 2024-12-25 14:49:42
+ * @FilePath: \code\docs\views\esri\esriMapData.vue
  * @Description: 
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
@@ -11,10 +11,11 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
 import { MapUtil } from "../../src/map";
+import '@geoscene/core/assets/geoscene/themes/light/main.css'
 
 let mapUtil
 onMounted(() => {
-  mapUtil = new MapUtil('ArcGIS')
+  mapUtil = new MapUtil('易智瑞')
   mapUtil.initMap({
     center: [116.397428, 39.90923],
     zoom: 12,
@@ -76,9 +77,6 @@ const loadLineLayerDemo = () => {
 </template>
 
 <style scoped>
-@import "https://js.arcgis.com/4.30/@arcgis/core/assets/esri/themes/light/main.css";
-@import "https://js.arcgis.com/calcite-components/2.11.1/calcite.css";
-
 #viewDiv {
   padding: 0;
   margin: 0;

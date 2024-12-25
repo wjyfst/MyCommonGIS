@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "LesGIS"
-  text: "ArcGIS API、高德地图API 等常用地图框架功能集成"
+  text: "易智瑞 API、高德地图API 等常用地图框架功能集成"
   tagline: 
   actions:
     - theme: brand

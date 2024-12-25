@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 15:21:10
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-20 15:42:49
+ * @LastEditTime: 2024-12-25 11:02:59
  * @FilePath: \code\docs\LesGIS\dataLayerLoading.md
  * @Description: 
  * 
@@ -20,7 +20,7 @@ import esriMapData from '../views/esri/esriMapData.vue'
 
 <amapData />
 
-## ArcGIS示例
+## 易智瑞示例
 
 <esriMapData />
 ## 点位数据

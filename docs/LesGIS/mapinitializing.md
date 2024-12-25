@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 15:20:44
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-09-27 14:06:30
+ * @LastEditTime: 2024-12-25 11:03:42
  * @FilePath: \code\docs\LesGIS\mapinitializing.md
  * @Description: 
  * 
@@ -33,7 +33,7 @@ import esriMap from '../views/esri/esriMapInit.vue'
 2. 创建`MapUtil`实例
    
    ```js
-   let mapUtil=new MapUtil( apiName:'高德'|'ArcGIS' )
+   let mapUtil=new MapUtil( apiName:'高德'|'易智瑞' )
    ```
 
 3. `initMap`初始化方法参数说明：
@@ -47,10 +47,10 @@ import esriMap from '../views/esri/esriMapInit.vue'
 `callback`| - | `function` | 否 |地图初始化完成之后的回调函数
 
     
-1. 调用示例
+4. 调用示例
 
     ```js
-    mapUtil.initMap({      
+    mapUtil.initMap({
         center: [116.397428, 39.90923],
         zoom: 12,
         heading: -15,
@@ -60,5 +60,5 @@ import esriMap from '../views/esri/esriMapInit.vue'
 ## 高德
 <amap />
 
-## ArcGIS
+## 易智瑞
 <esriMap />

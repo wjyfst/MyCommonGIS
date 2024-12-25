@@ -1,18 +1,19 @@
-import Map from "@arcgis/core/Map";
-import SceneView from "@arcgis/core/views/SceneView";
-// import gis from "./arcgis-utils";
-import { gis } from "./arcgis-utils";
-export const arcgis = {
+import Map from "@geoscene/core/Map";
+import SceneView from "@geoscene/core/views/SceneView";
+import { gis } from "./geoscene-utils";
+export const geoscene = {
     _layerGroup: {},
     _evtGroup: {},
     initMap(params) {
-        window.esriMap = new Map({
-            basemap: "topo-vector"
+        window.geosceneMap = new Map({
+            basemap: "tianditu-vector"          //矢量底图
+            // basemap: "tianditu-topography"   //地形图
+            // basemap: "tianditu-image"        //影像底图
         });
 
-        window.esriView = new SceneView({
+        window.geosceneView = new SceneView({
             container: params.container||"viewDiv", // reference the div id
-            map: esriMap,
+            map: geosceneMap,
             zoom: params.zoom,
             center: params.center,
             // camera: {
@@ -31,14 +32,14 @@ export const arcgis = {
             // heading:params.heading,
             // tilt:params.tilt
         });
-        esriView.when(() => {
+        geosceneView.when(() => {
             //初始化相机角度
-            esriView.goTo({
+            geosceneView.goTo({
                 heading: -params.heading,
                 tilt: params.tilt
             })
             //移除工具
-            esriView.ui.remove(esriView.ui.getComponents().filter(val => val.label != '属性'))
+            geosceneView.ui.remove(geosceneView.ui.getComponents().filter(val => val.label != '属性'))
 
             if (params.callback) params.callback()
         })
@@ -49,8 +50,8 @@ export const arcgis = {
      * @return {*}
      */
     destroy() {
-        window.esriMap?.destroy()
-        window.esriView?.destroy()
+        window.geosceneMap?.destroy()
+        window.geosceneView?.destroy()
     },
 
     /**
@@ -69,7 +70,7 @@ export const arcgis = {
         let data = opts.data
         let iconlist = iconcfg.iconlist || {}
         let callback = opts.callback || null
-        const { cluster = true, viewer = esriView } = opts
+        const { cluster = true, viewer = geosceneView } = opts
         if (!data || data.length == 0) {
             console.error('上图数据不可为空！', layercfg.layerid)
             return
@@ -202,7 +203,7 @@ export const arcgis = {
             })
         })
         let layer = await gis.addLineLayer({
-            view:esriView,
+            view:geosceneView,
             data,
             width: style.width || 5,
             color: style.color || "#00ff00"
