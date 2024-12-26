@@ -90,7 +90,6 @@ export class MapUtil {
         this.layers[layerid] = this.mapAPI.loadPointLayer(opts)
     };
     loadLineLayer = (opts) => {
-        let layercfg = opts.layercfg || {};
         let layerid = opts.layerid || layercfg.layerid
 
         if (!this._checkBeforeLoad(layerid)) {
@@ -98,6 +97,15 @@ export class MapUtil {
         }
 
         this.layers[layerid] = this.mapAPI.loadLineLayer(opts)
+    };
+    loadPolygonLayer = (opts) => {
+        let layerid = opts.layerid || layercfg.layerid
+
+        if (!this._checkBeforeLoad(layerid)) {
+            return
+        }
+
+        this.layers[layerid] = this.mapAPI.loadPolygonLayer(opts)
     };
     /**
      * @description: 移除单个图层

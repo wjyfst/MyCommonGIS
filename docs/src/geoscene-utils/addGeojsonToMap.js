@@ -1,4 +1,4 @@
-import { layerCreate } from "./core.js";
+import layerCreatAsync from "./layerCreatAsync.js";
 
 /**
  * 添加JSON图层，并返回图层对象
@@ -7,21 +7,21 @@ import { layerCreate } from "./core.js";
  * @param {*} props 选填 图层设置信息
  * @returns
  */
-function addGeojsonToMap(view, geojson, props) {
+async function addGeojsonToMap(view, geojson, props) {
   const blob = new Blob([JSON.stringify(geojson)], {
     type: "application/json",
   });
 
   const url = URL.createObjectURL(blob);
-  const layer = layerCreate({
+  const layer = await layerCreatAsync({
     type: "geojson",
     url,
     ...props,
   });
   view.map.add(layer);
-  view.whenLayerView(layer).then(() => {
-    view.goTo(layer.fullExtent);
-  });
+  // view.whenLayerView(layer).then(() => {
+  //   view.goTo(layer.fullExtent);
+  // });
   return layer;
 }
 

@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 15:21:10
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-25 11:02:59
+ * @LastEditTime: 2024-12-26 17:08:07
  * @FilePath: \code\docs\LesGIS\dataLayerLoading.md
  * @Description: 
  * 
@@ -23,7 +23,9 @@ import esriMapData from '../views/esri/esriMapData.vue'
 ## 易智瑞示例
 
 <esriMapData />
+
 ## 点位数据
+
 通过`mapUtil.loadPointLayer(opts)`方法加载点位图层
 
 ### `opts`参数
@@ -40,6 +42,7 @@ import esriMapData from '../views/esri/esriMapData.vue'
 |`iconCfg.offsetY`  |` -50 ` | `Number` | 否 |  |
 |`datacfg.latfield` |`'lat' ` | `String` | 否 | 描述`opt.data`数据中经纬度字段等信息。|
 |`datacfg.lngfield` |` 'lng' ` | `String` | 否 | 描述`opt.data`数据中经纬度字段等信息。|
+|`onclick`          | ` (e)=>{  } ` |`Function`| 否 | 图层点击事件 |
 |`callback`          | ` (layer)=>{  } ` |`Function`| 否 | 图层加载完成之后的回调函数 |
 
 ### 调用示例
@@ -71,6 +74,19 @@ import esriMapData from '../views/esri/esriMapData.vue'
 
 
 ## 线数据
+通过`mapUtil.loadLineLayer(opts)`方法加载线数据图层
+
+### `opts`参数
+
+|参数名             | 示例 |类型  |是否必传 |说明|
+|:-:                |-|-|-|-|
+|`layerid`          | `'pointLayer'` |`String`| 是 | 图层唯一标识。 |
+|`lines`             | ` [  [ [116.402639, 39.93196],[116.391256, 39.907343] ], `<br><br>` [ [116.390489, 39.921375],[116.371166, 39.9211718] ]   ]` <br>此数据为两条线段 | ` Array` | 是 |  |
+|`sr`          | `'wgs84'` |`String`| 否 | 线数据坐标系。 |
+|`style.width` |`'5' ` | `String` | 否 | 设置线宽。|
+|`style.color` |` '#00ff00' ` | `String` | 否 | 设置线色彩。|
+|`callback`          | ` (layer)=>{  } ` |`Function`| 否 | 图层加载完成之后的回调函数 |
+
 ### 调用示例
 
 ```js
@@ -84,10 +100,12 @@ import esriMapData from '../views/esri/esriMapData.vue'
         [116.37116642734117, 39.921171821696646,0]
       ]
     ],
+    sr:"wgs84",
     style: {
       width: 5,
       color: '#00ff00'
-    }
+    },
+    callback:()=>{  },
   })
 ```
 ## 面数据

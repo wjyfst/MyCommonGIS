@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 16:08:11
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-25 14:49:42
+ * @LastEditTime: 2024-12-26 14:12:13
  * @FilePath: \code\docs\views\esri\esriMapData.vue
  * @Description: 
  * 
@@ -24,6 +24,7 @@ onMounted(() => {
     callback: () => {
       loadPointLayerDemo()
       loadLineLayerDemo()
+      loadPolygonLayerDemo()
     }
   })
 });
@@ -47,6 +48,9 @@ const loadPointLayerDemo = () => {
       offsetX: -20,
       offsetY: -50,
     },
+    onclick: (e) => {
+      console.log(e);
+    },
     callback: (layer) => {
       console.log(layer);
     }
@@ -57,15 +61,51 @@ const loadLineLayerDemo = () => {
     layerid: 'PolylineLayer',
     lines: [
       [
-        [116.40263981407037, 39.9319649160779,0],
-        [116.39125609711363, 39.90734360237673,0],
-        [116.39048947611673, 39.92137584534936,0],
-        [116.37116642734117, 39.921171821696646,0]
+        [116.40263981407037, 39.9319649160779, 0],
+        [116.39125609711363, 39.90734360237673, 0],
+        [116.39048947611673, 39.92137584534936, 0],
+        [116.37116642734117, 39.921171821696646, 0]
       ]
     ],
     style: {
       width: 5,
       color: '#00ff00'
+    }
+  })
+}
+
+const loadPolygonLayerDemo = () => {
+  mapUtil.loadPolygonLayer({
+    layerid: 'PolygonLayer',
+    data: {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "coordinates": [
+              [
+                [116.38912144545418, 39.90681206805624],
+                [116.36966719920929, 39.90296952809362],
+                [116.38364585230448, 39.89733861564295],
+                [116.40403492448968, 39.89613113615823],
+                [116.4027431028382, 39.90640997644326],
+                [116.40466374529433, 39.91132232382836],
+                [116.39319827077111, 39.90216520312279],
+                [116.38912144545418, 39.90681206805624]
+              ]
+            ],
+            "type": "Polygon"
+          }
+        }
+      ]
+    },
+    onclick: (e) => {
+      console.log(e);
+    },
+    callback: (layer) => {
+      console.log(layer);
     }
   })
 }

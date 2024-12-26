@@ -1,9 +1,13 @@
 import Map from "@geoscene/core/Map";
 import SceneView from "@geoscene/core/views/SceneView";
 import { gis } from "./geoscene-utils";
+import MapClickEventHandle from "./geoscene-utils/MapClickEventHandle.js";
+
+
 export const geoscene = {
     _layerGroup: {},
     _evtGroup: {},
+    mapClickEventHandle: null,
     initMap(params) {
         window.geosceneMap = new Map({
             basemap: "tianditu-vector"          //矢量底图
@@ -12,7 +16,7 @@ export const geoscene = {
         });
 
         window.geosceneView = new SceneView({
-            container: params.container||"viewDiv", // reference the div id
+            container: params.container || "viewDiv", // reference the div id
             map: geosceneMap,
             zoom: params.zoom,
             center: params.center,
@@ -41,7 +45,11 @@ export const geoscene = {
             //移除工具
             geosceneView.ui.remove(geosceneView.ui.getComponents().filter(val => val.label != '属性'))
 
-            if (params.callback) params.callback()
+            if (params.callback) params.callback();
+
+            this.mapClickEventHandle = new MapClickEventHandle(geosceneView)
+
+
         })
 
     },
@@ -111,60 +119,62 @@ export const geoscene = {
             objectIdField: "objid",
             rendererIcon,
         }).then(res => {
-            // const pointEventId = ArcGisUtils.mapClickEventHandle.add(res.id, (point, graphic, graphics) => {
-            //     const pointStr = `${point.x},${point.y}`
-            //     if (mapUtil._clickEvtPoint == pointStr) return
-            //     mapUtil._clickEvtPoint = pointStr
-            //     if (graphic && graphics.length == 1) {
-            //         graphic.attributes.position = point
-            //         graphic.attributes.data = _attr[graphic.attributes.guid]
-            //         let graArray = []
-            //         if (graphics) {
-            //             graphics.forEach(item => {
-            //                 item.attributes.data = _attr[item.attributes.guid]
-            //                 graArray.push(item.attributes)
-            //             })
-            //         }
-            //         if (onclick) onclick(graphic.attributes, graArray)
-            //         if (popcfg.dict) {
-            //             this._createPopup({
-            //                 layerid,
-            //                 position: graphic.geometry,
-            //                 dict: popcfg.dict,
-            //                 attr: graphic.attributes,
-            //                 title: popcfg.title || "详情",
-            //                 offset: popcfg.offset,
-            //             })
-            //         }
+            const pointEventId = this.mapClickEventHandle.add(res.id, (point, graphic) => {
+                if (graphic) {
+                    if (onclick) onclick(graphic.attributes)
+                }
+                //     const pointStr = `${point.x},${point.y}`
+                //     if (mapUtil._clickEvtPoint == pointStr) return
+                //     mapUtil._clickEvtPoint = pointStr
+                //     if (graphic && graphics.length == 1) {
+                //         graphic.attributes.position = point
+                //         graphic.attributes.data = _attr[graphic.attributes.guid]
+                //         let graArray = []
+                //         if (graphics) {
+                //             graphics.forEach(item => {
+                //                 item.attributes.data = _attr[item.attributes.guid]
+                //                 graArray.push(item.attributes)
+                //             })
+                //         }
+                // if (onclick) onclick(graphic.attributes)
+                //         if (popcfg.dict) {
+                //             this._createPopup({
+                //                 layerid,
+                //                 position: graphic.geometry,
+                //                 dict: popcfg.dict,
+                //                 attr: graphic.attributes,
+                //                 title: popcfg.title || "详情",
+                //                 offset: popcfg.offset,
+                //             })
+                //         }
 
-            //     } else if (graphics.length > 1) {
-            //         const datas = [];
-            //         for (let i = 0; i < graphics.length; i++) {
-            //             const { attributes } = graphics[i];
-            //             attributes.data = _attr[attributes.guid]
-            //             datas.push(attributes)
-            //         }
-            //         graphic.attributes.data = _attr[graphic.attributes.guid]
-            //         if (onclick) {
-            //             let graArray = []
-            //             graphics.forEach(item => {
-            //                 item.attributes.data = _attr[item.attributes.guid]
-            //                 graArray.push(item.attributes)
-            //             })
-            //             onclick(graphic.attributes, graArray)
-            //         } else {
-            //             this._createPopup({
-            //                 layerid,
-            //                 position: point,
-            //                 dict: popcfg.dict,
-            //                 attr: datas,
-            //                 title: popcfg.title || "详情",
-            //                 offset: popcfg.offset,
-            //             })
-            //         }
-            //     }
-            // })
-            // this._sortClickEvts()
+                //     } else if (graphics.length > 1) {
+                //         const datas = [];
+                //         for (let i = 0; i < graphics.length; i++) {
+                //             const { attributes } = graphics[i];
+                //             attributes.data = _attr[attributes.guid]
+                //             datas.push(attributes)
+                //         }
+                //         graphic.attributes.data = _attr[graphic.attributes.guid]
+                //         if (onclick) {
+                //             let graArray = []
+                //             graphics.forEach(item => {
+                //                 item.attributes.data = _attr[item.attributes.guid]
+                //                 graArray.push(item.attributes)
+                //             })
+                //             onclick(graphic.attributes, graArray)
+                //         } else {
+                //             this._createPopup({
+                //                 layerid,
+                //                 position: point,
+                //                 dict: popcfg.dict,
+                //                 attr: datas,
+                //                 title: popcfg.title || "详情",
+                //                 offset: popcfg.offset,
+                //             })
+                //         }
+                //     }
+            })
             // //鼠标滑动事件
             // if (opts.onblur && !this.blurevts[layerid]) {
             //     this.blurevts[layerid] = function (e, pt) {
@@ -172,12 +182,13 @@ export const geoscene = {
             //             opts.onblur({ ...e, data: _attr[e.guid], position: pt })
             //     }
             // }
+            this._sortClickEvts()
             this._layerGroup[layerid] = res
             if (callback) callback(res)
         })
     },
     async loadLineLayer(opts) {
-        let { layerid, lines, geojson, style } = opts
+        let { layerid, lines, geojson, style, callback = null } = opts
         let data = []
         if (lines) {
             geojson = {
@@ -203,13 +214,67 @@ export const geoscene = {
             })
         })
         let layer = await gis.addLineLayer({
-            view:geosceneView,
+            view: geosceneView,
             data,
             width: style.width || 5,
             color: style.color || "#00ff00"
         })
         this._layerGroup[layerid] = layer
+        if (callback) callback(layer)
 
+    },
+    async loadPolygonLayer(params) {
+        const { layerid, data, style = {}, onclick, zoomToLayer = false, callback = null } = params;
+        if (!data) {
+            console.error('上图数据不可为空！')
+            return
+        };
+        let layer;
+        let renderer = {
+            type: "simple",  // autocasts as new SimpleRenderer()
+            symbol: {
+                type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+                color: style.fillColor || [255, 50, 40, 0.9],
+                style: 'solid',
+                outline: {  // autocasts as new SimpleLineSymbol()
+                    width: style.strokeWidth || 3,
+                    color: style.strokeColor || [193, 210, 240, 0.7],
+                }
+            }
+        };
+
+        layer = await gis.addGeojsonToMap(geosceneView, data, { renderer });
+
+        this._layerGroup[layerid] = layer
+
+        if (callback) callback(layer)
+
+        layer.when(() => {
+            if (zoomToLayer) geosceneView.goTo(layer.fullExtent)
+            const pointEventId = this.mapClickEventHandle.add(layer.id, (point, graphic) => {
+                if (graphic) {
+                    graphic.attributes.position = point
+                    if (onclick) onclick(graphic.attributes)
+                }
+            })
+            this._sortClickEvts()
+        })
+
+    },
+
+    _sortClickEvts() {
+        // 事件排序
+        let pointlyr = [], polygonlyr = []
+        for (let i = 0; i < this.mapClickEventHandle._callbackEvent.length; i++) {
+            const __id = this.mapClickEventHandle._callbackEvent[i].layerId
+            if (geosceneView.map.findLayerById(__id)) {
+                if (geosceneView.map.findLayerById(__id)?.geometryType == "polygon") polygonlyr.push(this.mapClickEventHandle._callbackEvent[i])
+                else {
+                    pointlyr.push(this.mapClickEventHandle._callbackEvent[i])
+                }
+            }
+        }
+        this.mapClickEventHandle._callbackEvent = [...pointlyr, ...polygonlyr]
     },
     /**
      * @description: 移除单个图层
