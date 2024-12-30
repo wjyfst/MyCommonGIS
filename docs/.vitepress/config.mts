@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 14:38:14
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-25 11:14:41
+ * @LastEditTime: 2024-12-30 10:43:12
  * @FilePath: \code\docs\.vitepress\config.mts
  * @Description: 
  * 
@@ -12,14 +12,14 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "LesGIS",
-  description: "LesGIS——常用地图框架",
+  title: "WebGIS框架集成",
+  description: "常用地图框架集成",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: '主页', link: '/' },
       {
-        text: 'LesGIS',
+        text: '开始',
         link: '/LesGIS/mapinitializing.md'
       },
     ],

@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 15:21:10
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-26 18:21:33
+ * @LastEditTime: 2024-12-30 16:41:40
  * @FilePath: \code\docs\LesGIS\dataLayerLoading.md
  * @Description: 
  * 
@@ -116,10 +116,13 @@ import esriMapData from '../views/esri/esriMapData.vue'
 |参数名             | 示例 |类型  |是否必传 |说明|
 |:-:                |-|-|-|-|
 |`layerid`          | `'pointLayer'` |`String`| 是 | 图层唯一标识。 |
-|`lines`             | ` [  [ [116.402639, 39.93196],[116.391256, 39.907343] ], `<br><br>` [ [116.390489, 39.921375],[116.371166, 39.9211718] ]   ]` <br>此数据为两条线段 | ` Array` | 是 |  |
-|`sr`          | `'wgs84'` |`String`| 否 | 线数据坐标系。 |
-|`style.width` |`'5' ` | `String` | 否 | 设置线宽。|
-|`style.color` |` '#00ff00' ` | `String` | 否 | 设置线色彩。|
+|`data`             | 由[GeoJson](https://geojson.org/)格式数据组成的数组 | ` Array` | 是 |  |
+|`sr`          | `'wgs84'` |`String`| 否 | 数据坐标系。 |
+|`style.fillColor` |`'#00B2D5' ` | `String` | 否 | 设置面填充色。|
+|`style.fillOpacity` |` '0.5' ` | `String` | 否 | 设置面透明度。|
+|`style.strokeColor` |` '#00D3FC' ` | `String` | 否 | 设置描边颜色。|
+|`style.strokeWeight` |` '2' ` | `String` | 否 | 设置描边宽度。|
+|`onclick`          | ` (e)=>{  } ` |`Function`| 否 | 图层点击事件 |
 |`callback`          | ` (layer)=>{  } ` |`Function`| 否 | 图层加载完成之后的回调函数 |
 
 ### 调用示例
@@ -127,30 +130,34 @@ import esriMapData from '../views/esri/esriMapData.vue'
 ```js
   mapUtil.loadPolygonLayer({
     layerid: 'PolygonLayer',
-    data: {
-      "type": "FeatureCollection",
-      "features": [
-        {
-          "type": "Feature",
-          "properties": {},
-          "geometry": {
-            "coordinates": [
-              [
-                [116.38912144545418, 39.90681206805624],
-                [116.36966719920929, 39.90296952809362],
-                [116.38364585230448, 39.89733861564295],
-                [116.40403492448968, 39.89613113615823],
-                [116.4027431028382, 39.90640997644326],
-                [116.40466374529433, 39.91132232382836],
-                [116.39319827077111, 39.90216520312279],
-                [116.38912144545418, 39.90681206805624]
-              ]
-            ],
-            "type": "Polygon"
-          }
+    data: [
+      {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "coordinates": [
+            [
+              [116.38912144545418, 39.90681206805624],
+              [116.36966719920929, 39.90296952809362],
+              [116.38364585230448, 39.89733861564295],
+              [116.40403492448968, 39.89613113615823],
+              [116.4027431028382, 39.90640997644326],
+              [116.40466374529433, 39.91132232382836],
+              [116.39319827077111, 39.90216520312279],
+              [116.38912144545418, 39.90681206805624]
+            ]
+          ],
+          "type": "Polygon"
         }
-      ]
+      }
+    ],
+    style: {
+      fillColor: '#00B2D5',
+      fillOpacity: '0.5',
+      strokeColor: '#00D3FC',
+      strokeWeight: 2,
     },
+    sr: 'wgs84',
     onclick: (e) => {
       console.log(e);
     },

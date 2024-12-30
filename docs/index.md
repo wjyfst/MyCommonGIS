@@ -3,12 +3,12 @@
 layout: home
 
 hero:
-  name: "LesGIS"
+  name: "WebGIS框架集成"
   text: "易智瑞 API、高德地图API 等常用地图框架功能集成"
   tagline: 
   actions:
     - theme: brand
-      text: LesGIS
+      text: 开始
       link: /LesGIS/mapinitializing.md
     # - theme: alt
     #   text: 高德地图API

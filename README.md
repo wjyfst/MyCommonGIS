@@ -2,21 +2,22 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-01-19 16:51:59
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-27 11:15:03
+ * @LastEditTime: 2024-12-30 16:49:15
  * @FilePath: \code\README.md
  * @Description: 
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
 -->
-# gis
+# 项目简介
 针对特定地图框架方法进行封装或定制化开发，并提供常用的地图数据处理工具，实现地图渲染以及地图交互。
-- [gis](#gis)
+- [项目简介](#项目简介)
   - [目前支持框架](#目前支持框架)
   - [功能预览](#功能预览)
     - [地图初始化](#地图初始化)
       - [高德初始化](#高德初始化)
       - [易智瑞初始化](#易智瑞初始化)
     - [基础地理数据加载](#基础地理数据加载)
+      - [高德示例](#高德示例)
       - [易智瑞示例](#易智瑞示例)
   - [使用方法](#使用方法)
   - [后续开发目标](#后续开发目标)
@@ -33,13 +34,17 @@
 ### 地图初始化
 
 #### 高德初始化
-<img src="https://gitee.com/wjygiteefst/CommonGIS/raw/master/pics/%E9%AB%98%E5%BE%B7Init.webp" width="100%" />
+<img src="https://gitee.com/wjygiteefst/CommonGIS/raw/master/pics/高德Init.webp" width="100%" />
 
 #### 易智瑞初始化
 
 <img src="https://gitee.com/wjygiteefst/CommonGIS/raw/master/pics/GeoSceneInit.webp" width="100%" />
 
 ### 基础地理数据加载
+
+#### 高德示例
+
+<img src="https://gitee.com/wjygiteefst/CommonGIS/raw/master/pics/高德DataLoading.webp" width="100%" />
 
 #### 易智瑞示例
 
@@ -61,4 +66,4 @@ npm run docs:dev
 ```
 
 ## 后续开发目标
-1.实现对ArcGIS API for JavaScript、易利等项目中常用地图API的支持……
+1.实现对高德 API、 GeoScene API for JavaScript等项目中常用地图API的支持……
