@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 16:08:11
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-26 14:12:13
+ * @LastEditTime: 2024-12-30 15:15:21
  * @FilePath: \code\docs\views\esri\esriMapData.vue
  * @Description: 
  * 
@@ -77,29 +77,32 @@ const loadLineLayerDemo = () => {
 const loadPolygonLayerDemo = () => {
   mapUtil.loadPolygonLayer({
     layerid: 'PolygonLayer',
-    data: {
-      "type": "FeatureCollection",
-      "features": [
-        {
-          "type": "Feature",
-          "properties": {},
-          "geometry": {
-            "coordinates": [
-              [
-                [116.38912144545418, 39.90681206805624],
-                [116.36966719920929, 39.90296952809362],
-                [116.38364585230448, 39.89733861564295],
-                [116.40403492448968, 39.89613113615823],
-                [116.4027431028382, 39.90640997644326],
-                [116.40466374529433, 39.91132232382836],
-                [116.39319827077111, 39.90216520312279],
-                [116.38912144545418, 39.90681206805624]
-              ]
-            ],
-            "type": "Polygon"
-          }
+    data: [
+      {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "coordinates": [
+            [
+              [116.38912144545418, 39.90681206805624],
+              [116.36966719920929, 39.90296952809362],
+              [116.38364585230448, 39.89733861564295],
+              [116.40403492448968, 39.89613113615823],
+              [116.4027431028382, 39.90640997644326],
+              [116.40466374529433, 39.91132232382836],
+              [116.39319827077111, 39.90216520312279],
+              [116.38912144545418, 39.90681206805624]
+            ]
+          ],
+          "type": "Polygon"
         }
-      ]
+      }
+    ],
+    style: {
+      fillColor: '#00B2D5',
+      fillOpacity: '0.5',
+      strokeColor: '#00D3FC',
+      strokeWeight: 2,
     },
     onclick: (e) => {
       console.log(e);

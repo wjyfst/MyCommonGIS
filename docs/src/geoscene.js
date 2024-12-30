@@ -20,21 +20,6 @@ export const geoscene = {
             map: geosceneMap,
             zoom: params.zoom,
             center: params.center,
-            // camera: {
-            //     position: {
-            //         spatialReference: {
-            //             wkid: 4490,
-            //         },
-            //         x: params.center[0] || 119.65842342884746,
-            //         y: params.center[1] || 28.97890877935061,
-            //         // z: params.z || 10280.48295974452,
-            //     },
-
-            //     heading: params.heading > 0 ? params.heading : 360 + params.heading,
-            //     tilt: params.tilt
-            // },
-            // heading:params.heading,
-            // tilt:params.tilt
         });
         geosceneView.when(() => {
             //初始化相机角度
@@ -45,10 +30,11 @@ export const geoscene = {
             //移除工具
             geosceneView.ui.remove(geosceneView.ui.getComponents().filter(val => val.label != '属性'))
 
+            //场景加载完成回调
             if (params.callback) params.callback();
 
+            //地图点击事件init
             this.mapClickEventHandle = new MapClickEventHandle(geosceneView)
-
 
         })
 
@@ -187,26 +173,31 @@ export const geoscene = {
             if (callback) callback(res)
         })
     },
-    async loadLineLayer(opts) {
-        let { layerid, lines, geojson, style, callback = null } = opts
+    /**
+     * @description: 线数据加载
+     * @param {*} layerid
+     * @param {*} lines 
+     * @param {*} style { width: 3, color: [193, 210, 240, 0.7] }
+     * @param {*} callback
+     * @return {*}
+     */
+    async loadLineLayer({ layerid, lines, style, callback = null }) {
         let data = []
-        if (lines) {
-            geojson = {
-                "type": "FeatureCollection",
-                "features": []
-            }
-            lines.forEach((item, idx) => {
-                let line = {
-                    "type": "Feature",
-                    "properties": {},
-                    "geometry": {
-                        "coordinates": [item],
-                        "type": "LineString"
-                    }
-                }
-                geojson.features.push(line)
-            })
+        let geojson = {
+            "type": "FeatureCollection",
+            "features": []
         }
+        lines.forEach((item, idx) => {
+            let line = {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                    "coordinates": [item],
+                    "type": "LineString"
+                }
+            }
+            geojson.features.push(line)
+        })
         geojson.features.forEach(item => {
             data.push({
                 paths: item.geometry.coordinates,
@@ -223,6 +214,16 @@ export const geoscene = {
         if (callback) callback(layer)
 
     },
+    /**
+     * @description: geojson格式面数据加载
+     * @param {*} layerid ''
+     * @param {*} data 
+     * @param {*} style { fillColor: [255, 50, 40, 0.9], strokeWidth: 3, strokeColor: [193, 210, 240, 0.7] }
+     * @param {*} onclick ()=>{}
+     * @param {*} zoomToLayer false
+     * @param {*} callback ()=>{}
+     * @return {*}
+     */
     async loadPolygonLayer(params) {
         const { layerid, data, style = {}, onclick, zoomToLayer = false, callback = null } = params;
         if (!data) {
@@ -237,19 +238,20 @@ export const geoscene = {
                 color: style.fillColor || [255, 50, 40, 0.9],
                 style: 'solid',
                 outline: {  // autocasts as new SimpleLineSymbol()
-                    width: style.strokeWidth || 3,
+                    width: style.strokeWeight || 3,
                     color: style.strokeColor || [193, 210, 240, 0.7],
                 }
             }
         };
 
-        layer = await gis.addGeojsonToMap(geosceneView, data, { renderer });
+        layer = await gis.addGeojsonToMap(geosceneView, { type: 'FeatureCollection', features: data }, { renderer });
 
         this._layerGroup[layerid] = layer
 
         if (callback) callback(layer)
 
         layer.when(() => {
+            if (style.fillOpacity) layer.opacity = style.fillOpacity
             if (zoomToLayer) geosceneView.goTo(layer.fullExtent)
             const pointEventId = this.mapClickEventHandle.add(layer.id, (point, graphic) => {
                 if (graphic) {
@@ -262,6 +264,10 @@ export const geoscene = {
 
     },
 
+    /**
+     * @description: 点击事件排序，实现点图层点击事件优先级高于面图层点击事件
+     * @return {*}
+     */
     _sortClickEvts() {
         // 事件排序
         let pointlyr = [], polygonlyr = []

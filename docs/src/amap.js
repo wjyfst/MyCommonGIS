@@ -81,50 +81,25 @@ export const amap = {
             return;
         }
         data.forEach(item => {
-            // if (opts.query && opts.query.type === "perPoint") {
-            //     if (!opts.query.centers) {
-            //         opts.query.centers = [[item.lng * 1, item.lat * 1]]
-            //     }
-            //     else {
-            //         opts.query.centers.push([item.lng * 1, item.lat * 1])
-            //     }
-            // }
             let marker = this._getMarker(item, opts);
             if (!isNaN(item.lng * 1) && !isNaN(item.lat * 1))
                 gaodeMap.add(marker);
+
+            //点击事件
+            if (onclick) marker.on('click', onclick)
+
             this._layerGroup[opts.layerid].push(marker);
         });
+
+        //图层加载回调
         if (callback && typeof callback == 'function') callback(this._layerGroup[opts.layerid])
+
         return {
             layer: this._layerGroup[layerid],
             remove: () => {
                 this.removeLayer(layerid)
             }
         }
-        // if (opts.minZoom) {
-        //     let evtName = "zoomchange";
-        //     let evtHandler = function (e) {
-        //         let curZoom = e.target.getZoom();
-        //         if (curZoom >= opts.minZoom) {
-        //             this._layerGroup[opts.layerid].forEach(marker => {
-        //                 marker.show();
-        //             })
-        //         }
-        //         else {
-        //             this._layerGroup[opts.layerid].forEach(marker => {
-        //                 marker.hide();
-        //             })
-        //         }
-        //     };
-        //     gaodeMap.on(evtName, evtHandler)
-        //     if (!this._evtGroup[opts.layerid]) {
-        //         this._evtGroup[opts.layerid] = {
-        //             "zoomchange": evtHandler
-        //         }
-        //     } else {
-        //         Object.assign(this._evtGroup[opts.layerid], { "zoomchange": evtHandler })
-        //     }
-        // }
     },
     /**
      * 生成Marker
@@ -210,6 +185,14 @@ export const amap = {
         return marker
     },
 
+    /**
+     * @description: 线数据加载
+     * @param {*} layerid
+     * @param {*} lines 
+     * @param {*} style { width: 3, color: [193, 210, 240, 0.7] }
+     * @param {*} callback
+     * @return {*}
+     */
     loadLineLayer: function (opts) {
         if (!opts.layerid) return;
         if (!this._layerGroup[opts.layerid]) {
@@ -224,7 +207,7 @@ export const amap = {
         lines.forEach(line => {
             // 创建一个折线覆盖物对象
             let polyline = new AMap.Polyline({
-                path: line.map(coord=>{
+                path: line.map(coord => {
                     return this._srConvertInterface(coord[0] * 1, coord[1] * 1, opts.sr)
                 }),  // 这里只处理了lines数组中的第一个元素（如果有多个可以循环处理）
                 strokeColor: style.color,
@@ -242,6 +225,29 @@ export const amap = {
                 this.removeLayer(layerid)
             }
         }
+    },
+    loadPolygonLayer: function ({ layerid, data, sr='', style={}, onclick, callback }) {
+        let opts = {
+            path: [],
+            ...style
+        }
+        data.forEach(feature => {
+            opts.path.push(feature.geometry.coordinates.map(ring => {
+                return ring.map(coords => {
+                    if (sr) return this._srConvertInterface(coords[0], coords[1], sr)
+                    else return coords
+                })
+            }))
+        });
+        let polygon = new AMap.Polygon(opts);
+
+        this._layerGroup[layerid] = polygon;
+
+        gaodeMap.add(polygon);
+
+        polygon.on('click', onclick)
+
+        if (callback && typeof callback == 'function') callback(this._layerGroup[layerid])
     },
 
     /**

@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-01-19 16:35:21
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-25 15:41:27
+ * @LastEditTime: 2024-12-30 14:26:10
  * @FilePath: \code\docs\src\map.js
  * @Description: 
  * 
@@ -72,7 +72,7 @@ export class MapUtil {
     };
 
     /**
-     * @description: 点图层加载
+     * @description: 点数据加载
      * @param {*} opts
      * @return {*}
      */
@@ -89,6 +89,11 @@ export class MapUtil {
         }
         this.layers[layerid] = this.mapAPI.loadPointLayer(opts)
     };
+    /**
+     * @description: 线数据加载
+     * @param {*} opts
+     * @return {*}
+     */
     loadLineLayer = (opts) => {
         let layerid = opts.layerid || layercfg.layerid
 
@@ -98,6 +103,11 @@ export class MapUtil {
 
         this.layers[layerid] = this.mapAPI.loadLineLayer(opts)
     };
+    /**
+     * @description: 面数据加载
+     * @param {*} opts
+     * @return {*}
+     */
     loadPolygonLayer = (opts) => {
         let layerid = opts.layerid || layercfg.layerid
 
@@ -109,7 +119,7 @@ export class MapUtil {
     };
     /**
      * @description: 移除单个图层
-     * @param {*} layerid
+     * @param {*} layerid: 'layerid_1'
      * @return {*}
      */
     removeLayer = (layerid) => {
@@ -133,7 +143,7 @@ export class MapUtil {
     };
     /**
      * @description: 移除所有图层或根据layerlist移除
-     * @param {*} layerlist
+     * @param {*} layerlist: ['layerid_1', 'layerid_2']
      * @return {*}
      */
     removeAllLayers = (layerlist = []) => {
