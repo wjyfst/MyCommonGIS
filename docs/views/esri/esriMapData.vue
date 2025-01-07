@@ -2,7 +2,7 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 16:08:11
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-30 15:15:21
+ * @LastEditTime: 2025-01-03 10:22:32
  * @FilePath: \code\docs\views\esri\esriMapData.vue
  * @Description: 
  * 
@@ -11,7 +11,6 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
 import { MapUtil } from "../../src/map";
-import '@geoscene/core/assets/geoscene/themes/light/main.css'
 
 let mapUtil
 onMounted(() => {

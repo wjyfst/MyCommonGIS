@@ -8,8 +8,8 @@
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
  */
-import { geoscene } from "./geoscene";
-import { amap } from "./amap";
+import { geoscene } from "./geoscene.js";
+import { amap } from "./amap.js";
 
 const mapAPIEnum = {
     '高德': { api: amap },
