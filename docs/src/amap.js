@@ -1,21 +1,5 @@
-
 import AMapLoader from "@amap/amap-jsapi-loader";
 
-// map = new AMap.Map('mapContainer', {
-//     mapStyle: 'amap://styles/76af0e5e254ef97f4f3075382807af23',
-//     resizeEnable: true,
-//     rotateEnable: true,
-//     pitchEnable: true,
-//     zoom: 12,
-//     pitch: 45,
-//     rotation: -15,
-//     viewMode: '3D',//开启3D视图,默认为关闭
-//     // buildingAnimation:true,//楼块出现是否带动画
-//     showBuildingBlock: false,
-//     skyColor: "#000000",             //2F4F4F
-//     zooms: [3, 20],
-//     center: [105.064969, 30.108144]
-// }),
 
 export const amap = {
     _layerGroup: {},
@@ -247,6 +231,71 @@ export const amap = {
         polygon.on('click', onclick)
 
         if (callback && typeof callback == 'function') callback(this._layerGroup[layerid])
+    },
+
+    /**
+     * @description: 瓦片图层加载
+     * @param {*} opts
+     * @return {*}
+     */
+    loadTileLayer(opts) {
+        const { layerid, url, sublayers, type, callback } = opts;
+        let tileLayer;
+        if (type === "wms") {
+            tileLayer = new AMap.TileLayer.WMS({
+                url: url,
+                blend: false,
+                tileSize: 256,
+                params: {
+                    LAYERS: sublayers[0].name,
+                    FORMAT: 'image/png'
+                },
+                zIndex: 100,
+            });
+        } else if (type === "wmts") {
+            tileLayer = new AMap.TileLayer.WMTS({
+                url: url,
+                blend: false,
+                tileSize: 256,
+                params: {
+                    LAYER: '0',
+                    FORMAT: 'image/png'
+                },
+                zIndex: 100,
+            });
+        } else {
+            tileLayer = new AMap.TileLayer({
+                tileUrl: url,
+                zIndex: 100,
+            });
+        }
+        gaodeMap.add(tileLayer);
+        this._layerGroup[layerid] = tileLayer;
+        if (callback) callback(tileLayer);
+    },
+
+    /**
+     * @description: 矢量图层加载
+     * @param {*} opts
+     * @return {*}
+     */
+    loadVectorLayer(opts) {
+        const { layerid, url, style, callback } = opts;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const vectorLayer = new AMap.VectorLayer({
+                    source: new AMap.VectorSource({
+                        features: new AMap.GeoJSON({
+                            geoJSON: data
+                        })
+                    }),
+                    style: style
+                });
+                gaodeMap.add(vectorLayer);
+                this._layerGroup[layerid] = vectorLayer;
+                if (callback) callback(vectorLayer);
+            });
     },
 
     /**

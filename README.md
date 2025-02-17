@@ -2,8 +2,8 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-01-19 16:51:59
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2025-01-07 14:26:58
- * @FilePath: \code\README.md
+ * @LastEditTime: 2025-01-21 16:31:48
+ * @FilePath: \devCode\README.md
  * @Description: 
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
@@ -34,21 +34,21 @@
 ### 地图初始化
 
 #### 高德初始化
-<img src="./pics/高德Init.webp" width="100%" />
+<img src="https://gitee.com/wjygiteefst/CommonGIS/raw/master/pics/高德Init.webp" width="100%" />
 
 #### 易智瑞初始化
 
-<img src="./pics/GeoSceneInit.webp" width="100%" />
+<img src="https://gitee.com/wjygiteefst/CommonGIS/raw/master/pics/GeoSceneInit.webp" width="100%" />
 
 ### 基础地理数据加载
 
 #### 高德示例
 
-<img src="./pics/高德DataLoading.webp" width="100%" />
+<img src="https://gitee.com/wjygiteefst/CommonGIS/raw/master/pics/高德DataLoading.webp" width="100%" />
 
 #### 易智瑞示例
 
-<img src="./pics/GeoSceneDataLoading.webp" width="100%" />
+<img src="https://gitee.com/wjygiteefst/CommonGIS/raw/master/pics/GeoSceneDataLoading.webp" width="100%" />
 
 
 ## 使用方法
