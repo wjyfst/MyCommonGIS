@@ -1,21 +1,5 @@
-
 import AMapLoader from "@amap/amap-jsapi-loader";
 
-// map = new AMap.Map('mapContainer', {
-//     mapStyle: 'amap://styles/76af0e5e254ef97f4f3075382807af23',
-//     resizeEnable: true,
-//     rotateEnable: true,
-//     pitchEnable: true,
-//     zoom: 12,
-//     pitch: 45,
-//     rotation: -15,
-//     viewMode: '3D',//开启3D视图,默认为关闭
-//     // buildingAnimation:true,//楼块出现是否带动画
-//     showBuildingBlock: false,
-//     skyColor: "#000000",             //2F4F4F
-//     zooms: [3, 20],
-//     center: [105.064969, 30.108144]
-// }),
 
 export const amap = {
     _layerGroup: {},
@@ -25,30 +9,29 @@ export const amap = {
             key: "	fd461864b17ad3085741da8e5b9d10a1", // 申请好的Web端开发者Key，首次调用 load 时必填
             version: "2.0", // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
             plugins: ["AMap.Scale"], //需要使用的的插件列表，如比例尺'AMap.Scale'，支持添加多个如：['...','...']
-        })
-            .then((AMap) => {
-                window.gaodeMap = new AMap.Map(params.container || "container", {
-                    mapStyle: 'amap://styles/76af0e5e254ef97f4f3075382807af23',
-                    resizeEnable: true,
-                    rotateEnable: true,
-                    pitchEnable: true,
-                    zoom: params.zoom,
-                    pitch: params.tilt,
-                    rotation: params.heading,
-                    viewMode: '3D',//开启3D视图,默认为关闭
-                    // buildingAnimation:true,//楼块出现是否带动画
-                    showBuildingBlock: false,
-                    skyColor: "#fff",             //2F4F4F
-                    zooms: [3, 20],
-                    center: params.center, // 初始化地图中心点位置
-                });
-                gaodeMap.on("click", function (e) {
-                    gaodeMap.clearInfoWindow();
-                })
-                gaodeMap.on('complete', function () {
-                    if (params.callback) params.callback()
-                });
+        }).then((AMap) => {
+            window.gaodeMap = new AMap.Map(params.container || "container", {
+                mapStyle: 'amap://styles/76af0e5e254ef97f4f3075382807af23',
+                resizeEnable: true,
+                rotateEnable: true,
+                pitchEnable: true,
+                zoom: params.zoom,
+                pitch: params.tilt,
+                rotation: params.heading,
+                viewMode: '3D',//开启3D视图,默认为关闭
+                // buildingAnimation:true,//楼块出现是否带动画
+                showBuildingBlock: false,
+                skyColor: "#fff",             //2F4F4F
+                zooms: [3, 20],
+                center: params.center, // 初始化地图中心点位置
+            });
+            gaodeMap.on("click", function (e) {
+                gaodeMap.clearInfoWindow();
             })
+            gaodeMap.on('complete', function () {
+                if (params.callback) params.callback()
+            });
+        })
             .catch((e) => {
                 console.log(e);
             });
@@ -226,7 +209,7 @@ export const amap = {
             }
         }
     },
-    loadPolygonLayer: function ({ layerid, data, sr='', style={}, onclick, callback }) {
+    loadPolygonLayer: function ({ layerid, data, sr = '', style = {}, onclick, callback }) {
         let opts = {
             path: [],
             ...style
@@ -248,6 +231,71 @@ export const amap = {
         polygon.on('click', onclick)
 
         if (callback && typeof callback == 'function') callback(this._layerGroup[layerid])
+    },
+
+    /**
+     * @description: 瓦片图层加载
+     * @param {*} opts
+     * @return {*}
+     */
+    loadTileLayer(opts) {
+        const { layerid, url, sublayers, type, callback } = opts;
+        let tileLayer;
+        if (type === "wms") {
+            tileLayer = new AMap.TileLayer.WMS({
+                url: url,
+                blend: false,
+                tileSize: 256,
+                params: {
+                    LAYERS: sublayers[0].name,
+                    FORMAT: 'image/png'
+                },
+                zIndex: 100,
+            });
+        } else if (type === "wmts") {
+            tileLayer = new AMap.TileLayer.WMTS({
+                url: url,
+                blend: false,
+                tileSize: 256,
+                params: {
+                    LAYER: '0',
+                    FORMAT: 'image/png'
+                },
+                zIndex: 100,
+            });
+        } else {
+            tileLayer = new AMap.TileLayer({
+                tileUrl: url,
+                zIndex: 100,
+            });
+        }
+        gaodeMap.add(tileLayer);
+        this._layerGroup[layerid] = tileLayer;
+        if (callback) callback(tileLayer);
+    },
+
+    /**
+     * @description: 矢量图层加载
+     * @param {*} opts
+     * @return {*}
+     */
+    loadVectorLayer(opts) {
+        const { layerid, url, style, callback } = opts;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const vectorLayer = new AMap.VectorLayer({
+                    source: new AMap.VectorSource({
+                        features: new AMap.GeoJSON({
+                            geoJSON: data
+                        })
+                    }),
+                    style: style
+                });
+                gaodeMap.add(vectorLayer);
+                this._layerGroup[layerid] = vectorLayer;
+                if (callback) callback(vectorLayer);
+            });
     },
 
     /**

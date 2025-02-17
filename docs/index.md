@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "WebGIS框架集成"
-  text: "易智瑞 API、高德地图API 等常用地图框架功能集成"
+  text: "易智瑞 API、高德地图API 等常用地图框架"
   tagline: 
   actions:
     - theme: brand

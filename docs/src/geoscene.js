@@ -2,6 +2,7 @@ import Map from "@geoscene/core/Map";
 import SceneView from "@geoscene/core/views/SceneView";
 import { gis } from "./geoscene-utils";
 import MapClickEventHandle from "./geoscene-utils/MapClickEventHandle.js";
+import '@geoscene/core/assets/geoscene/themes/light/main.css'
 
 
 export const geoscene = {
@@ -262,6 +263,48 @@ export const geoscene = {
             this._sortClickEvts()
         })
 
+    },
+
+    /**
+     * @description: 瓦片图层加载
+     * @param {*} opts
+     * @return {*}
+     */
+    async loadTileLayer(opts) {
+        const { layerid, url, type, callback, sublayers } = opts;
+        if (!layerid || !url) {
+            console.warn('layerid 或 服务地址 不可为空')
+            return
+        }
+        let tileLayer;
+        if (type == 'wms') {
+            tileLayer = await gis.loadArcgisLayer(geosceneView,{
+                type: "wms",
+                title: layerid,
+                url,
+                sublayers,
+            });
+        }else{
+            tileLayer = await gis.loadArcgisLayer(geosceneView,{
+                type,
+                url,
+            });
+        }
+        geosceneView.map.add(tileLayer);
+        this._layerGroup[layerid] = tileLayer;
+        if (callback) callback(tileLayer);
+    },
+
+    /**
+     * @description: 矢量图层加载
+     * @param {*} opts
+     * @return {*}
+     */
+    async loadVectorLayer(opts) {
+        const { layerid, url, style, callback } = opts;
+        const layer = await gis.addGeojsonToMap(geosceneView, { url }, { renderer: style });
+        this._layerGroup[layerid] = layer;
+        if (callback) callback(layer);
     },
 
     /**

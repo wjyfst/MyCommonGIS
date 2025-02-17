@@ -8,8 +8,8 @@
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
  */
-import { geoscene } from "./geoscene";
-import { amap } from "./amap";
+import { geoscene } from "./geoscene.js";
+import { amap } from "./amap.js";
 
 const mapAPIEnum = {
     '高德': { api: amap },
@@ -117,6 +117,33 @@ export class MapUtil {
 
         this.layers[layerid] = this.mapAPI.loadPolygonLayer(opts)
     };
+
+    /**
+     * @description: 瓦片图层加载
+     * @param {*} opts
+     * @return {*}
+     */
+    loadTileLayer = (opts) => {
+        let layerid = opts.layerid || layercfg.layerid;
+        if (!this._checkBeforeLoad(layerid)) {
+            return;
+        }
+        this.layers[layerid] = this.mapAPI.loadTileLayer(opts);
+    };
+
+    /**
+     * @description: 矢量图层加载
+     * @param {*} opts
+     * @return {*}
+     */
+    loadVectorLayer = (opts) => {
+        let layerid = opts.layerid || layercfg.layerid;
+        if (!this._checkBeforeLoad(layerid)) {
+            return;
+        }
+        this.layers[layerid] = this.mapAPI.loadVectorLayer(opts);
+    };
+
     /**
      * @description: 移除单个图层
      * @param {*} layerid: 'layerid_1'

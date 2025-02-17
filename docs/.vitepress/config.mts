@@ -2,14 +2,13 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 14:38:14
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-30 10:43:12
- * @FilePath: \code\docs\.vitepress\config.mts
+ * @LastEditTime: 2025-02-17 17:13:45
+ * @FilePath: \devCode\docs\.vitepress\config.mts
  * @Description: 
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
  */
 import { defineConfig } from 'vitepress'
-
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "WebGIS框架集成",
@@ -34,7 +33,7 @@ export default defineConfig({
         text: '地理数据展示',
         items: [
           { text: '图层管理器', link: '/LesGIS/layerManager.md' },
-          { text: '基础地理数据', link: '/LesGIS/dataLayerLoading.md' },
+          { text: '基础地理数据', link: '/LesGIS/basicDataLoading.md' },
           { text: '地图服务', link: '/LesGIS/serviceLayerLoading.md' }
         ]
       },
@@ -106,4 +105,15 @@ export default defineConfig({
     lightModeSwitchTitle: '切换到浅色模式',
     darkModeSwitchTitle: '切换到深色模式'
   },
+  vite: {
+    server: {
+      proxy: {
+        '/geoserver/': {
+          target: 'http://127.0.0.1:8080/',
+          changeOrigin: true,
+          rewrite: path => path
+        }
+      }
+    }
+  }
 })
