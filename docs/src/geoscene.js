@@ -3,6 +3,7 @@ import SceneView from "@geoscene/core/views/SceneView";
 import { gis } from "./geoscene-utils";
 import MapClickEventHandle from "./geoscene-utils/MapClickEventHandle.js";
 import '@geoscene/core/assets/geoscene/themes/light/main.css'
+import { MapUtil } from "./map";
 
 
 export const geoscene = {

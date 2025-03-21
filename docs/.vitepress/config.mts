@@ -69,9 +69,6 @@ export default defineConfig({
       },
     ],
 
-    socialLinks: [
-      { icon: 'github', link: 'https://192.168.150.193:10443/gis/gis' }
-    ],
     search: {
       provider: 'local',
       options: {

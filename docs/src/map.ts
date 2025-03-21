@@ -1,46 +1,41 @@
-/*
- * @Author: Wang_Jinyao && wjyzzuer@163.com
- * @Date: 2024-01-19 16:35:21
- * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-30 14:26:10
- * @FilePath: \code\docs\src\map.js
- * @Description: 
- * 
- * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
- */
 import { geoscene } from "./geoscene.js";
 import { amap } from "./amap.js";
+import { LineLayerParams, MapAPI, MapInit, PointLayerParams, PolygonLayerParams, TileLayerParams } from "./interface/map-interface.js";
 
-const mapAPIEnum = {
-    '高德': { api: amap },
-    '易智瑞': { api: geoscene }
-};
 /**
  * @description: 参数apiName:'高德'||'ArcGIS'
  * @return {*}
  */
 export class MapUtil {
-    constructor(apiName) {
-        if (!apiName) { console.error('清输入框架名称：“高德”/“易智瑞”'); return }
-        if (!mapAPIEnum[apiName]) { console.error('目前不支持' + apiName + '框架'); return }
+    public layers = {} as { [key: string]: any };
 
-        this.mapAPI = mapAPIEnum[apiName].api
+    private mapAPIEnum = {
+        '高德': { api: amap },
+        '易智瑞': { api: geoscene }
+    };
+
+    private mapAPI: MapAPI;//存放当前api
+    private events: Object;
+    private popups: Object;
+    private mapclick: null;
+    private layerstate: Object;
+    private _clickEvts: Object;
+    private _clickEvtPoint: string;
+    constructor(apiName: '高德' | '易智瑞') {
+        if (!apiName) { console.error('清输入框架名称：“高德”/“易智瑞”'); return }
+        if (!this.mapAPIEnum[apiName]) { console.error('目前不支持' + apiName + '框架'); return }
+
+        this.mapAPI = this.mapAPIEnum[apiName].api as MapAPI;
+
+        return this
     }
-    mapAPI = {};//存放当前api
-    layers = {};//图层管理器
-    events = {};
-    popups = {};
-    mapclick = null;
-    layerstate = {};
-    _clickEvts = {};
-    _clickEvtPoint = "";
 
     /**
     * @description: 初始化
     * @param {*} params
     * @return {*}
     */
-    initMap = (params) => {
+    public initMap = (params: MapInit) => {
         this.mapAPI.initMap(params)
     };
 
@@ -48,7 +43,7 @@ export class MapUtil {
      * @description: 销毁地图
      * @return {*}
      */
-    destroyMap = () => {
+    public destroyMap =  () => {
         Object.keys(this.layers).forEach(layer => {
             this.removeLayer(layer)
         })
@@ -59,7 +54,7 @@ export class MapUtil {
      * @param {*} layerid
      * @return {*}
      */
-    _checkBeforeLoad = (layerid) => {
+    public _checkBeforeLoad = (layerid: string) => {
         if (!layerid) {
             console.error('layerid不可为空')
             return false
@@ -76,12 +71,11 @@ export class MapUtil {
      * @param {*} opts
      * @return {*}
      */
-    loadPointLayer = (opts) => {
-        let layercfg = opts.layercfg || {};
-        let layerid = opts.layerid || layercfg.layerid
+    public loadPointLayer = (opts: PointLayerParams) => {
+        let layerid = opts.layerid
         let data = opts.data
         if (!data || data.length == 0) {
-            console.error('上图数据不可为空！', layercfg.layerid)
+            console.error('上图数据不可为空！', layerid)
             return
         };
         if (!this._checkBeforeLoad(layerid)) {
@@ -94,8 +88,8 @@ export class MapUtil {
      * @param {*} opts
      * @return {*}
      */
-    loadLineLayer = (opts) => {
-        let layerid = opts.layerid || layercfg.layerid
+    public loadLineLayer = (opts: LineLayerParams) => {
+        let layerid = opts.layerid
 
         if (!this._checkBeforeLoad(layerid)) {
             return
@@ -108,8 +102,8 @@ export class MapUtil {
      * @param {*} opts
      * @return {*}
      */
-    loadPolygonLayer = (opts) => {
-        let layerid = opts.layerid || layercfg.layerid
+    public loadPolygonLayer = (opts: PolygonLayerParams) => {
+        let layerid = opts.layerid
 
         if (!this._checkBeforeLoad(layerid)) {
             return
@@ -123,8 +117,8 @@ export class MapUtil {
      * @param {*} opts
      * @return {*}
      */
-    loadTileLayer = (opts) => {
-        let layerid = opts.layerid || layercfg.layerid;
+    public loadTileLayer = (opts: TileLayerParams) => {
+        let layerid = opts.layerid;
         if (!this._checkBeforeLoad(layerid)) {
             return;
         }
@@ -136,8 +130,8 @@ export class MapUtil {
      * @param {*} opts
      * @return {*}
      */
-    loadVectorLayer = (opts) => {
-        let layerid = opts.layerid || layercfg.layerid;
+    public loadVectorLayer = (opts) => {
+        let layerid = opts.layerid;
         if (!this._checkBeforeLoad(layerid)) {
             return;
         }
@@ -149,7 +143,7 @@ export class MapUtil {
      * @param {*} layerid: 'layerid_1'
      * @return {*}
      */
-    removeLayer = (layerid) => {
+    public removeLayer = (layerid: string) => {
         if (!layerid) return
         if (this.layers[layerid]) {
             if (this.layers[layerid].remove) {
@@ -163,18 +157,18 @@ export class MapUtil {
         // if (this.blurevts[layerid]) {
         //     delete this.blurevts[layerid]
         // }
-        if (layerid == this.popups.layerid) {
-            if (gis.mapPopupWidget._popupRef) gis.mapPopupWidget.close()
-            this.popups.layerid = null
-        }
+        // if (layerid == this.popups.layerid) {
+        //     if (gis.mapPopupWidget._popupRef) gis.mapPopupWidget.close()
+        //     this.popups.layerid = null
+        // }
     };
     /**
      * @description: 移除所有图层或根据layerlist移除
      * @param {*} layerlist: ['layerid_1', 'layerid_2']
      * @return {*}
      */
-    removeAllLayers = (layerlist = []) => {
-        Object.keys(this.layers).forEach(layerid => {
+    public removeAllLayers = (layerlist: string[] = []) => {
+        Object.keys(this.layers).forEach((layerid) => {
             if (this.layers[layerid]) {
                 if (layerlist && layerlist.length > 0) {
                     if (layerlist.includes(layerid)) this.removeLayer(layerid)
@@ -192,7 +186,7 @@ export class MapUtil {
      * @param {*} errorfn
      * @return {*}
      */
-    _ajaxQuery = (url, data, successfn, errorfn) => {
+    public _ajaxQuery = (url: string, data: any, successfn: Function, errorfn: Function) => {
         $.ajax({
             type: "get",
             data: data,
