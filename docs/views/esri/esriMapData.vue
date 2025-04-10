@@ -1,21 +1,12 @@
-<!--
- * @Author: Wang_Jinyao && wjyzzuer@163.com
- * @Date: 2024-07-24 16:08:11
- * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2025-01-03 10:22:32
- * @FilePath: \code\docs\views\esri\esriMapData.vue
- * @Description: 
- * 
- * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
--->
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
 import { MapUtil } from "../../src/map";
 
-let mapUtil
+// 使用绝对路径
+const iconImage = '/img/icon.png'
+const mapUtil = ref( new MapUtil('易智瑞'))
 onMounted(() => {
-  mapUtil = new MapUtil('易智瑞')
-  mapUtil.initMap({
+  mapUtil.value.initMap({
     center: [116.397428, 39.90923],
     zoom: 12,
     heading: -15,
@@ -29,10 +20,10 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  mapUtil.destroyMap()
+  mapUtil.value.destroyMap()
 });
 const loadPointLayerDemo = () => {
-  mapUtil.loadPointLayer({
+  mapUtil.value.loadPointLayer({
     layerid: 'pointLayer',
     data: [
       { lng: 116.40263981407037, lat: 39.9319649160779, name: 'point1' },
@@ -41,7 +32,7 @@ const loadPointLayerDemo = () => {
       { lng: 116.37116642734117, lat: 39.921171821696646, name: 'point4' },
     ],
     iconCfg: {
-      url: '../src/img/icon.png',
+      url: iconImage,
       width: 40,
       height: 50,
       offsetX: -20,
@@ -56,7 +47,7 @@ const loadPointLayerDemo = () => {
   })
 }
 const loadLineLayerDemo = () => {
-  mapUtil.loadLineLayer({
+  mapUtil.value.loadLineLayer({
     layerid: 'PolylineLayer',
     lines: [
       [
@@ -74,7 +65,7 @@ const loadLineLayerDemo = () => {
 }
 
 const loadPolygonLayerDemo = () => {
-  mapUtil.loadPolygonLayer({
+  mapUtil.value.loadPolygonLayer({
     layerid: 'PolygonLayer',
     data: [
       {

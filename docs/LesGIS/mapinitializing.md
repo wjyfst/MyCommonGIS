@@ -1,25 +1,26 @@
-<!--
- * @Author: Wang_Jinyao && wjyzzuer@163.com
- * @Date: 2024-07-24 15:20:44
- * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-25 11:03:42
- * @FilePath: \code\docs\LesGIS\mapinitializing.md
- * @Description: 
- * 
- * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
--->
 <script setup>
 import amap from '../views/amap/amapInit.vue'
 import esriMap from '../views/esri/esriMapInit.vue'
+import cesium from '../views/cesium/cesiumInit.vue'
 </script>
 
-
 # 地图初始化
+
 提供通用的方法支持不同地图框架初始化，实现地图场景渲染
+
+## 高德
+<amap />
+
+## 易智瑞
+<esriMap />
+
+## Cesium
+<cesium />
+
 ## 文件引入
 
 1. 引入`map.js`文件，实现`mapUtil`对象的导入。
-   
+
    `import`方式引入：
    ```js
    import { MapUtil } from "map.js";
@@ -57,8 +58,3 @@ import esriMap from '../views/esri/esriMapInit.vue'
         tilt: 45,})
     ```
 
-## 高德
-<amap />
-
-## 易智瑞
-<esriMap />

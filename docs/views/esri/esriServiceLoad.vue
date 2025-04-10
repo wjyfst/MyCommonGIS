@@ -1,36 +1,27 @@
-<!--
- * @Author: Wang_Jinyao && wjyzzuer@163.com
- * @Date: 2024-07-24 16:08:11
- * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2025-02-17 17:03:35
- * @FilePath: \devCode\docs\views\esri\esriServiceLoad.vue
- * @Description: 
- * 
- * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
--->
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
 import { MapUtil } from "../../src/map";
 
-let mapUtil
+const mapUtil = ref(new MapUtil('易智瑞'));
+
 onMounted(() => {
-  mapUtil = new MapUtil('易智瑞')
-  mapUtil.initMap({
+  mapUtil.value.initMap({
     center: [119.89283, 29.22381],
     zoom: 8,
     heading: -15,
     tilt: 45,
     callback: () => {
-      loadWMSTileLayer()
+      loadWMSTileLayer();
     }
-  })
+  });
 });
 
 onUnmounted(() => {
-  mapUtil.destroyMap()
+  mapUtil.value.destroyMap();
 });
+
 const loadWMSTileLayer = () => {
-  mapUtil.loadTileLayer({
+  mapUtil.value.loadTileLayer({
     layerid: 'wmsLayer',
     url: '/geoserver/tiff/wms',
     type: 'wms',
