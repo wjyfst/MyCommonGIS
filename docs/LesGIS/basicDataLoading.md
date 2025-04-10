@@ -2,8 +2,8 @@
  * @Author: Wang_Jinyao && wjyzzuer@163.com
  * @Date: 2024-07-24 15:21:10
  * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2024-12-30 16:41:40
- * @FilePath: \code\docs\LesGIS\dataLayerLoading.md
+ * @LastEditTime: 2025-04-10 15:23:34
+ * @FilePath: \devCode\docs\LesGIS\basicDataLoading.md
  * @Description: 
  * 
  * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
@@ -12,6 +12,7 @@
 <script setup>
 import amapData from '../views/amap/amapData.vue'
 import esriMapData from '../views/esri/esriMapData.vue'
+import cesiumData from '../views/cesium/cesiumData.vue'
 </script>
 
 # 基础地理数据
@@ -23,6 +24,10 @@ import esriMapData from '../views/esri/esriMapData.vue'
 ## 易智瑞示例
 
 <esriMapData />
+
+## Cesium示例
+
+<cesiumData/>
 
 ## 点位数据
 

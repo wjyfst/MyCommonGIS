@@ -1,16 +1,25 @@
 import AMapLoader from "@amap/amap-jsapi-loader";
+import { MapInit } from "./interface/map-interface";
+
+declare global {
+    interface Window {
+        gaodeMap: any;
+        AMap: any;
+    }
+}
 
 
 export const amap = {
     _layerGroup: {},
     _evtGroup: {},
-    initMap: function (params) {
+    initMap: function (params:MapInit) {
         AMapLoader.load({
             key: "	fd461864b17ad3085741da8e5b9d10a1", // 申请好的Web端开发者Key，首次调用 load 时必填
             version: "2.0", // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
             plugins: ["AMap.Scale"], //需要使用的的插件列表，如比例尺'AMap.Scale'，支持添加多个如：['...','...']
         }).then((AMap) => {
-            window.gaodeMap = new AMap.Map(params.container || "container", {
+            window.AMap=AMap
+            window.gaodeMap = new window.AMap.Map(params.container || "container", {
                 mapStyle: 'amap://styles/76af0e5e254ef97f4f3075382807af23',
                 resizeEnable: true,
                 rotateEnable: true,
@@ -25,10 +34,10 @@ export const amap = {
                 zooms: [3, 20],
                 center: params.center, // 初始化地图中心点位置
             });
-            gaodeMap.on("click", function (e) {
-                gaodeMap.clearInfoWindow();
+            window.gaodeMap.on("click", function (e) {
+                window.gaodeMap.clearInfoWindow();
             })
-            gaodeMap.on('complete', function () {
+            window.gaodeMap.on('complete', function () {
                 if (params.callback) params.callback()
             });
         })
@@ -44,7 +53,20 @@ export const amap = {
      * @param data
      * @param opts
      */
-    loadPointLayer: function (opts) {
+    loadPointLayer: function (opts: {
+        datacfg?: object;
+        iconcfg?: { image?: string; width?: number; height?: number; offsetX?: number; offsetY?: number };
+        labelcfg?: { labelField?: string; onHover?: boolean };
+        layercfg?: { layerid?: string };
+        popcfg?: { popDom?: HTMLElement; popOffset?: { x: number; y: number }; renderPopCallBack?: Function; closePopCallback?: Function };
+        onclick?: Function;
+        layerid?: string;
+        data: Array<{ lng: number; lat: number; iconWidth?: number; iconHeight?: number; iconUrl?: string; [key: string]: any }>;
+        callback?: Function;
+        sr?: string;
+        zIndex?: number;
+        minZoom?: number;
+    }) {
         let datacfg = opts.datacfg || {};
         let iconcfg = opts.iconcfg || { image: "" };
         let labelcfg = opts.labelcfg || {};
@@ -53,7 +75,7 @@ export const amap = {
         let onclick = opts.onclick
         let layerid = opts.layerid || layercfg.layerid
         let data = opts.data
-        let iconlist = iconcfg.iconlist || {}
+        let iconlist = {}
         let callback = opts.callback || null
         if (!opts.layerid)
             return;
@@ -66,19 +88,21 @@ export const amap = {
         data.forEach(item => {
             let marker = this._getMarker(item, opts);
             if (!isNaN(item.lng * 1) && !isNaN(item.lat * 1))
-                gaodeMap.add(marker);
+                window.gaodeMap.add(marker);
 
             //点击事件
             if (onclick) marker.on('click', onclick)
 
-            this._layerGroup[opts.layerid].push(marker);
+            if (opts.layerid) {
+                this._layerGroup[opts.layerid].push(marker);
+            }
         });
 
         //图层加载回调
         if (callback && typeof callback == 'function') callback(this._layerGroup[opts.layerid])
 
         return {
-            layer: this._layerGroup[layerid],
+            layer: layerid ? this._layerGroup[layerid] : undefined,
             remove: () => {
                 this.removeLayer(layerid)
             }
@@ -100,8 +124,8 @@ export const amap = {
             iconWidth = opts.iconCfg.width;
             iconHeight = opts.iconCfg.height;
             iconOpts = {
-                size: new AMap.Size(iconWidth, iconHeight),
-                imageSize: new AMap.Size(iconWidth, iconHeight),
+                size: new window.AMap.Size(iconWidth, iconHeight),
+                imageSize: new window.AMap.Size(iconWidth, iconHeight),
                 image: opts.iconCfg.url
             }
         }
@@ -109,32 +133,33 @@ export const amap = {
             iconWidth = item.iconWidth;
             iconHeight = item.iconHeight;
             iconOpts = {
-                size: new AMap.Size(iconWidth, iconHeight),
-                imageSize: new AMap.Size(iconWidth, iconHeight),
+                size: new window.AMap.Size(iconWidth, iconHeight),
+                imageSize: new window.AMap.Size(iconWidth, iconHeight),
                 image: item.iconUrl
             }
         }
-        let icon = new AMap.Icon(iconOpts);
+        let icon = new window.AMap.Icon(iconOpts);
         let offset;
         if (opts.iconCfg.offsetX && opts.iconCfg.offsetY) {
-            offset = new AMap.Pixel(opts.iconCfg.offsetX * 1, opts.iconCfg.offsetY * 1)
+            offset = new window.AMap.Pixel(opts.iconCfg.offsetX * 1, opts.iconCfg.offsetY * 1)
         }
         else {
-            offset = new AMap.Pixel(0, 0)
+            offset = new window.AMap.Pixel(0, 0)
         }
         let markerOpts = {
-            position: new AMap.LngLat(item.lng * 1, item.lat * 1),
+            position: new window.AMap.LngLat(item.lng * 1, item.lat * 1),
             offset: offset,
             icon: icon,
-            zIndex: opts.zIndex || 100
+            zIndex: opts.zIndex || 100,
+            visible:true
         };
         if (opts.minZoom) {
-            let curZoom = gaodeMap.getZoom();
+            let curZoom = window.gaodeMap.getZoom();
             if (curZoom < opts.minZoom) {
                 markerOpts.visible = false
             }
         }
-        let marker = new AMap.Marker(markerOpts);
+        let marker = new window.AMap.Marker(markerOpts);
         if (opts.labelCfg) {
             item.labelText = item[opts.labelCfg.labelField];
             if (opts.labelCfg.onHover) {
@@ -142,7 +167,7 @@ export const amap = {
                     e.target.setLabel({
                         direction: "bottom",
                         content: `<div class="map-title">${e.target.getExtData().labelText}</div>`,
-                        offset: new AMap.Pixel(0, 30)
+                        offset: new window.AMap.Pixel(0, 30)
                     })
                 })
                 marker.on("mouseout", function (e) {
@@ -153,7 +178,7 @@ export const amap = {
                 marker.setLabel({
                     direction: "bottom",
                     content: `<div class="map-title">${item[opts.labelCfg.labelField]}</div>`,
-                    offset: new AMap.Pixel(0, 30)
+                    offset: new window.AMap.Pixel(0, 30)
                 })
             }
         }
@@ -182,14 +207,14 @@ export const amap = {
             this._layerGroup[opts.layerid] = [];
         }
         else { return; }
-        let layerid = opts.layerid || layercfg.layerid
+        let layerid = opts.layerid
         let lines = opts.lines;
         let style = opts.style;
         let callback = opts.callback || null;
 
         lines.forEach(line => {
             // 创建一个折线覆盖物对象
-            let polyline = new AMap.Polyline({
+            let polyline = new window.AMap.Polyline({
                 path: line.map(coord => {
                     return this._srConvertInterface(coord[0] * 1, coord[1] * 1, opts.sr)
                 }),  // 这里只处理了lines数组中的第一个元素（如果有多个可以循环处理）
@@ -198,7 +223,7 @@ export const amap = {
             });
 
             // 将折线添加到地图上
-            gaodeMap.add(polyline);
+            window.gaodeMap.add(polyline);
             this._layerGroup[layerid].push(polyline);
         })
         if (callback && typeof callback == 'function') callback(this._layerGroup[layerid])
@@ -210,23 +235,23 @@ export const amap = {
         }
     },
     loadPolygonLayer: function ({ layerid, data, sr = '', style = {}, onclick, callback }) {
-        let opts = {
+        let opts: { path: number[][][][]; [key: string]: any } = {
             path: [],
             ...style
         }
         data.forEach(feature => {
-            opts.path.push(feature.geometry.coordinates.map(ring => {
-                return ring.map(coords => {
+            opts.path.push((feature.geometry.coordinates as number[][][]).map(ring => {
+                return (ring as [number, number][]).map((coords) => {
                     if (sr) return this._srConvertInterface(coords[0], coords[1], sr)
                     else return coords
                 })
             }))
         });
-        let polygon = new AMap.Polygon(opts);
+        let polygon = new window.AMap.Polygon(opts);
 
         this._layerGroup[layerid] = polygon;
 
-        gaodeMap.add(polygon);
+        window.gaodeMap.add(polygon);
 
         polygon.on('click', onclick)
 
@@ -242,7 +267,7 @@ export const amap = {
         const { layerid, url, sublayers, type, callback } = opts;
         let tileLayer;
         if (type === "wms") {
-            tileLayer = new AMap.TileLayer.WMS({
+            tileLayer = new window.AMap.TileLayer.WMS({
                 url: url,
                 blend: false,
                 tileSize: 256,
@@ -253,7 +278,7 @@ export const amap = {
                 zIndex: 100,
             });
         } else if (type === "wmts") {
-            tileLayer = new AMap.TileLayer.WMTS({
+            tileLayer = new window.AMap.TileLayer.WMTS({
                 url: url,
                 blend: false,
                 tileSize: 256,
@@ -264,12 +289,12 @@ export const amap = {
                 zIndex: 100,
             });
         } else {
-            tileLayer = new AMap.TileLayer({
+            tileLayer = new window.AMap.TileLayer({
                 tileUrl: url,
                 zIndex: 100,
             });
         }
-        gaodeMap.add(tileLayer);
+        window.gaodeMap.add(tileLayer);
         this._layerGroup[layerid] = tileLayer;
         if (callback) callback(tileLayer);
     },
@@ -284,15 +309,15 @@ export const amap = {
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                const vectorLayer = new AMap.VectorLayer({
-                    source: new AMap.VectorSource({
-                        features: new AMap.GeoJSON({
+                const vectorLayer = new window.AMap.VectorLayer({
+                    source: new window.AMap.VectorSource({
+                        features: new window.AMap.GeoJSON({
                             geoJSON: data
                         })
                     }),
                     style: style
                 });
-                gaodeMap.add(vectorLayer);
+                window.gaodeMap.add(vectorLayer);
                 this._layerGroup[layerid] = vectorLayer;
                 if (callback) callback(vectorLayer);
             });
@@ -307,7 +332,7 @@ export const amap = {
             return;
         if (this._layerGroup[name]) {
             this._layerGroup[name].forEach(item => {
-                gaodeMap.remove(item);
+                window.gaodeMap.remove(item);
             });
             this._layerGroup[name] = [];
             delete this._layerGroup[name];
@@ -315,11 +340,11 @@ export const amap = {
         //解绑事件
         if (this._evtGroup[name]) {
             for (let key in this._evtGroup[name]) {
-                gaodeMap.off(key, this._evtGroup[name][key])
+                window.gaodeMap.off(key, this._evtGroup[name][key])
             }
             this._evtGroup[name] = null;
         }
-        gaodeMap.clearInfoWindow();
+        window.gaodeMap.clearInfoWindow();
     },
     /**
      * 清除所有图层
@@ -335,9 +360,9 @@ export const amap = {
      */
     showPopup: function (e) {
         let attributes = e.target.getExtData();
-        let curOffset = new AMap.Pixel(0, 0);
+        let curOffset = new window.AMap.Pixel(0, 0);
         if (attributes.popOffSet) {
-            curOffset = new AMap.Pixel(attributes.popOffSet.x, attributes.popOffSet.y);
+            curOffset = new window.AMap.Pixel(attributes.popOffSet.x, attributes.popOffSet.y);
         }
         let infoWindowOpts = {
             isCustom: true,
@@ -345,7 +370,7 @@ export const amap = {
             offset: curOffset,
             anchor: "bottom-left"
         };
-        this._infoWindow = new AMap.InfoWindow(infoWindowOpts);
+        this._infoWindow = new window.AMap.InfoWindow(infoWindowOpts);
         if (attributes.closePopCallback && typeof attributes.closePopCallback === "function") {
             this._infoWindow.on("close", function (e) {
                 if (!this._infoWindow.getIsOpen()) {
@@ -359,11 +384,11 @@ export const amap = {
                 attributes.renderPopCallBack(attributes)
             })
         }
-        this._infoWindow.open(map, e.target.getPosition());
+        this._infoWindow.open(window.gaodeMap, e.target.getPosition());
         // this._popOnShow = true;
         attributes.popDom.style.display = "block";
         $(".panel-close-tc").off("click").on("click", function () {
-            gaodeMap.clearInfoWindow();
+            window.gaodeMap.clearInfoWindow();
         });
     },
     /**
@@ -372,18 +397,18 @@ export const amap = {
      * @private
      */
     _showDistrict: function (name) {
-        let district = new AMap.DistrictSearch({
+        let district = new window.AMap.DistrictSearch({
             subdistrict: 0,   //获取边界不需要返回下级行政区
             extensions: 'all',  //返回行政区边界坐标组等具体信息
             level: 'district'  //查询行政级别为 市
         });
         district.search(name, function (status, result) {
-            let polygons = [];
+            let polygons: any[] = [];
             let bounds = result.districtList[0].boundaries;
             let center = result.districtList[0].center
             if (bounds) {
                 for (let i = 0; i < bounds.length; i++) {
-                    let polygon = new AMap.Polygon({
+                    let polygon = new window.AMap.Polygon({
                         path: bounds[i],
                         fillOpacity: 0,
                         fillColor: '#80d8ff',
@@ -392,10 +417,10 @@ export const amap = {
                     });
                     polygons.push(polygon);
                 }
-                gaodeMap.add(polygons)
+                window.gaodeMap.add(polygons);
             }
             if (center) {
-                let label = new AMap.LabelMarker({
+                let label = new window.AMap.LabelMarker({
                     position: center,
                     name: name,
                     zIndex: 100,

@@ -1,9 +1,10 @@
-import { geoscene } from "./geoscene.js";
-import { amap } from "./amap.js";
-import { LineLayerParams, MapAPI, MapInit, PointLayerParams, PolygonLayerParams, TileLayerParams } from "./interface/map-interface.js";
+import { geoscene } from "./geoscene";
+import { amap } from "./amap";
+import { cesium } from "./cesium";
+import { LineLayerParams, MapAPI, MapInit, ModelLayerParams, PointLayerParams, PolygonLayerParams, TileLayerParams } from "./interface/map-interface.js";
 
 /**
- * @description: 参数apiName:'高德'||'ArcGIS'
+ * @description: 参数apiName:'高德'||'易智瑞'||'cesium'
  * @return {*}
  */
 export class MapUtil {
@@ -11,7 +12,8 @@ export class MapUtil {
 
     private mapAPIEnum = {
         '高德': { api: amap },
-        '易智瑞': { api: geoscene }
+        '易智瑞': { api: geoscene },
+        'cesium': { api: cesium },
     };
 
     private mapAPI: MapAPI;//存放当前api
@@ -21,11 +23,11 @@ export class MapUtil {
     private layerstate: Object;
     private _clickEvts: Object;
     private _clickEvtPoint: string;
-    constructor(apiName: '高德' | '易智瑞') {
-        if (!apiName) { console.error('清输入框架名称：“高德”/“易智瑞”'); return }
+    constructor(apiName: '高德' | '易智瑞'|'cesium') {
+        if (!apiName) { console.error('清输入框架名称：“高德”/“易智瑞”/"cesium"'); return }
         if (!this.mapAPIEnum[apiName]) { console.error('目前不支持' + apiName + '框架'); return }
 
-        this.mapAPI = this.mapAPIEnum[apiName].api as MapAPI;
+        this.mapAPI = this.mapAPIEnum[apiName].api as unknown as MapAPI;
 
         return this
     }
@@ -136,6 +138,20 @@ export class MapUtil {
             return;
         }
         this.layers[layerid] = this.mapAPI.loadVectorLayer(opts);
+    };
+
+    
+    /**
+     * @description: 
+     * @param {ModelLayerParams} opts
+     * @return {*}
+     */
+    public loadModelLayer = (opts:ModelLayerParams) => {
+        let layerid = opts.layerid;
+        if (!this._checkBeforeLoad(layerid)) {
+            return;
+        }
+        this.layers[layerid] = this.mapAPI.loadModelLayer(opts);
     };
 
     /**

@@ -3,10 +3,11 @@ import { onMounted, onUnmounted, ref } from "vue";
 import { MapUtil } from "../../src/map";
 // 使用绝对路径
 const iconImage = '/img/icon.png'
-const mapUtil = ref(new MapUtil('高德'));
+const mapUtil = ref(new MapUtil('cesium'));
 
 onMounted(() => {
   mapUtil.value.initMap({
+    container: 'cesiumViewDiv',
     center: [116.397428, 39.90923],
     zoom: 12,
     heading: -15,
@@ -108,11 +109,11 @@ const loadPolygonLayerDemo = () => {
 </script>
 
 <template>
-  <div id="container"></div>
+  <div id="cesiumViewDiv"></div>
 </template>
 
 <style scoped>
-#container {
+#cesiumViewDiv {
   width: 100%;
   height: 400px;
 }

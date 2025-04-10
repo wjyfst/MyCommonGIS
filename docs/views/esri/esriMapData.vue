@@ -1,13 +1,3 @@
-<!--
- * @Author: Wang_Jinyao && wjyzzuer@163.com
- * @Date: 2024-07-24 16:08:11
- * @LastEditors: Wang_Jinyao && wjyzzuer@163.com
- * @LastEditTime: 2025-01-03 10:22:32
- * @FilePath: \code\docs\views\esri\esriMapData.vue
- * @Description: 
- * 
- * Copyright (c) 2024 by Wang_Jinyao, All Rights Reserved. 
--->
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
 import { MapUtil } from "../../src/map";
